@@ -17,13 +17,7 @@ const LoginBox = ({
         <h2>{title}</h2>
 
         <form onSubmit={onSubmit}>
-          {error && <p className="error-message">{error}</p>}
-          {success && (
-            <p className="success-message">
-              ¡Login exitoso! Redirigiendo...
-            </p>
-          )}
-
+                    
           <Input
             label="Correo"
             type="email"
@@ -40,7 +34,14 @@ const LoginBox = ({
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <button type="submit">Entrar</button>
+<button type="submit">Entrar</button>
+
+          {error && <p className="error-message active">{error}</p>}
+          {success && (
+            <p className="success-message active">
+              ¡Login exitoso! Redirigiendo...
+            </p>
+             )}
         </form>
       </div>
     </div>

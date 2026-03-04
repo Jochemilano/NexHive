@@ -10,5 +10,4 @@ export default function Home() {
       <Chat roomId={roomId} userId={userId} />
     </div>
   );
-  
 }

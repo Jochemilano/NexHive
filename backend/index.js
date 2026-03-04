@@ -717,6 +717,51 @@ io.on("connection", (socket) => {
     return socket.disconnect();
   }
 
+  // ---------------------------------------------
+  // 1️⃣ UNIRSE A SALA DE CHAT
+  socket.on("join-room", (roomId) => {
+    socket.join(roomId.toString());
+    console.log("Usuario", socket.userId, "se unió a sala", roomId);
+  });
+
+  // ---------------------------------------------
+  // 2️⃣ ENVIAR MENSAJE
+  socket.on("send-message", async ({ roomId, type, content }) => {
+    console.log("Mensaje recibido:", roomId, content);
+
+    try {
+      // Guardar en la base de datos
+      const result = await query(
+        "INSERT INTO messages (room_id, sender_id, type, content) VALUES (?, ?, ?, ?)",
+        [roomId, socket.userId, type, content]
+      );
+
+      const messageId = result.insertId;
+
+      // Obtener nombre del usuario
+      const [user] = await query(
+        "SELECT name FROM users WHERE id=?",
+        [socket.userId]
+      );
+
+      const messageData = {
+        id: messageId,
+        room_id: roomId,
+        sender_id: socket.userId,
+        sender_name: user?.name || "Usuario",
+        type,
+        content,
+        created_at: new Date()
+      };
+
+      // Emitir a todos en la sala
+      io.to(roomId.toString()).emit("receive-message", messageData);
+    } catch (err) {
+      console.error("ERROR SOCKET MESSAGE:", err);
+    }
+  });
+
+  // ---------------------------------------------
   // LLAMADAS SIMPLE-PEER
   socket.on("call-user", ({ toUserId, offer }) => {
     console.log("call-user recibido:", toUserId, "de", socket.userId);
@@ -738,6 +783,8 @@ io.on("connection", (socket) => {
     });
   });
 
+  // ---------------------------------------------
+  // DESCONECTAR
   socket.on("disconnect", () => {
     console.log("Usuario desconectado:", socket.userId);
     connectedUsers.delete(socket.userId);

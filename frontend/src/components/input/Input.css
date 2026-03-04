@@ -8,12 +8,12 @@
 .input-label {
   margin-left: 0.2rem;
   font-size: 14px;
-  color: #333;
+  color: var(--text-primary);
   font-weight: 700;
 }
 
 .input-field {
-  border: 1px solid #ccc;
+  border: 1px solid color-mix(in srgb, var(--text-secondary), transparent 50%);
   border-radius: 6px;
   font-size: 14px;
   padding: 10px;
@@ -21,8 +21,11 @@
   min-width: 100%;
   box-sizing: border-box;
 }
+.input-field::placeholder{
+  color: var(--text-secondary);
+}
 
 .input-field:focus {
   outline: none;
-  border: 2px solid var(--primary)
+  border-color: var(--primary-hover);
 }

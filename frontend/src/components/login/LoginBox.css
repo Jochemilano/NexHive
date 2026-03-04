@@ -30,18 +30,12 @@
 /* INPUTS */
 .center-box input {
   width: 100%;
-  box-sizing: border-box;
   padding: 0.7rem 0.9rem;
   border-radius: var(--radius-search);
-  border: none;
   background-color: var(--bg-soft);
   color: var(--text-primary);
   outline: none;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.center-box input::placeholder {
-  color: var(--text-secondary);
 }
 
 .center-box input:focus {
@@ -54,27 +48,41 @@
   width: 100%;
   padding: 12px;
   margin-top: 10px;
-  background-color: var(--primary);
+  background-color: var(--primary-hover);
   color: var(--bg-base);
   border: none;
-  border-radius: var(--radius-search);
+  border-radius: var(--radius-pill);
   font-weight: 600;
   cursor: pointer;
-  transition: 0.25s ease;
+  transition: 0.3s ease;
 }
 
 .center-box button:hover {
-  background-color: var(--primary-hover);
   transform: translateY(-2px);
 }
 
 /* MENSAJES */
-.error-message {
-  color: var(--error);
+.error-message,
+.success-message {
+  margin-top: 15px;
+  text-align: center;
   font-size: 13px;
+  opacity: 0;           
+  transform: translateY(-5px); 
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.error-message {
+  color: var(--error);   /* rojo */
 }
 
 .success-message {
-  color: var(--success);
-  font-size: 13px;
+  color: var(--success); /* verde */
+}
+
+/* Clase activa para mostrar mensaje */
+.error-message.active,
+.success-message.active {
+  opacity: 1;
+  transform: translateY(0);
 }
