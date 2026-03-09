@@ -40,3 +40,5 @@ npm list mysql2
 npm install jsonwebtoken
 ---
 npm install socket.io
+---
+npm install dotenv
