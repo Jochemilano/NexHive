@@ -4,13 +4,13 @@ const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
 
-// Rutas
-const authRoutes = require("./routes/auth");
-const groupsRoutes = require("./routes/groups");
-const projectsRoutes = require("./routes/projects");
-const eventsRoutes = require("./routes/events");
-const roomsRoutes = require("./routes/rooms");
-const genericRoutes = require("./routes/generic");
+// Controllers
+const authController = require("./controllers/auth");
+const groupsController = require("./controllers/groups");
+const projectsController = require("./controllers/projects");
+const eventsController = require("./controllers/events");
+const roomsController = require("./controllers/rooms");
+const genericController = require("./controllers/generic");
 
 // DB
 const db = require("./db");
@@ -25,14 +25,17 @@ app.use(express.json());
 // Endpoints básicos
 app.get("/", (req, res) => res.send("Servidor corriendo"));
 
-// Rutas
-app.use("/api", authRoutes);
-app.use("/api", groupsRoutes);
-app.use("/api", projectsRoutes);
-app.use("/api", eventsRoutes);
-app.use("/api", roomsRoutes);
-app.use("/api", genericRoutes);
+// ----------------------------------
+// Controllers como rutas
+// NOTA: Cada controller debe exportar un router interno como antes
+app.use("/api", authController);
+app.use("/api", groupsController);
+app.use("/api", projectsController);
+app.use("/api", eventsController);
+app.use("/api", roomsController);
+app.use("/api", genericController);
 
+// ----------------------------------
 // Servidor + Socket.io
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*", methods: ["GET", "POST"] } });
@@ -41,6 +44,6 @@ const connectedUsers = new Map();
 // Llamar al socket handler
 setupSockets(io, connectedUsers);
 
-// Iniciar servidor
+// ----------------------------------
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
