@@ -25,6 +25,9 @@ const SecondSidebar = ({ groupId }) => {
   const [isEditActivityOpen, setIsEditActivityOpen] = useState(false);
   const [editingActivityId, setEditingActivityId] = useState(null);
 
+// CAMBIO: estado para sidebar retractil
+const [collapsed, setCollapsed] = useState(false);
+
   const loadDetails = async () => {
     if (!groupId) return;
     try {
@@ -111,71 +114,87 @@ const SecondSidebar = ({ groupId }) => {
     }
   };
 
-  return (
-    <aside className="second-sidebar">
-      <h3>Canales</h3>
-      {details.channels.map(c => <div key={c.id}>{c.name}</div>)}
+   return (
+    <>
+      {/* SECOND SIDEBAR */}
+      <aside className={`second-sidebar ${collapsed ? "collapsed" : ""}`}>
+        {!collapsed && (
+          <div className="sidebar-content">
+            <h3>Canales</h3>
+            {details.channels.map(c => <div key={c.id}>{c.name}</div>)}
 
-      <div className="cont-sec">
-      <h3>Proyectos</h3>
-      <Modal.Button onClick={() => setIsOpen(true)}><IoEllipsisHorizontal/></Modal.Button>
-      </div>
-      
-      {details.projects.map(p => (
-        <div key={`project-${p.id}`} className="project-item">
-          <div className="project-header">
-            {p.name}
-            <button
-              className="add-activity-btn"
-              onClick={() => {
-                setCurrentProjectId(p.id);
-                setActivityName("");
-                setIsActivityOpen(true);
-              }}
-            >+</button>
-          </div>
+            <div className="cont-sec">
+              <h3>Proyectos</h3>
+              <Modal.Button onClick={() => setIsOpen(true)}>
+                <IoEllipsisHorizontal />
+              </Modal.Button>
+            </div>
 
-          <div className="project-activities">
-            {p.activities && p.activities.length > 0 ? (
-              p.activities.map(a => (
-                <div
-                  key={`activity-${a.id}`}
-                  className="activity-item"
-                  onClick={() => {
-                    setCurrentProjectId(p.id); // opcional, por si necesitas el projectId
-                    setEditingActivityId(a.id); // guardamos el id de la actividad
-                    setIsEditActivityOpen(true); // abrimos modal de editar
-                  }}
-                  style={{ cursor: "pointer" }} // para que se vea clickeable
-                >
-                  {a.name}
+            {details.projects.map(p => (
+              <div key={`project-${p.id}`} className="project-item">
+                <div className="project-header">
+                  {p.name}
+                  <button
+                    className="add-activity-btn"
+                    onClick={() => {
+                      setCurrentProjectId(p.id);
+                      setActivityName("");
+                      setIsActivityOpen(true);
+                    }}
+                  >+</button>
                 </div>
-              ))
-            ) : (
-              <span className="empty-activities">Sin actividades</span>
-            )}
+
+                <div className="project-activities">
+                  {p.activities?.length > 0
+                    ? p.activities.map(a => (
+                        <div
+                          key={`activity-${a.id}`}
+                          className="activity-item"
+                          onClick={() => {
+                            setCurrentProjectId(p.id);
+                            setEditingActivityId(a.id);
+                            setIsEditActivityOpen(true);
+                          }}
+                        >
+                          {a.name}
+                        </div>
+                      ))
+                    : <span className="empty-activities">Sin actividades</span>}
+                </div>
+              </div>
+            ))}
           </div>
+        )}
+      </aside>
 
-        </div>
-      ))}
+      {/* BOTÓN RETRACTIL FUERA DEL ASIDE */}
+      <div className="retract-button">
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          aria-label={collapsed ? "Expandir sidebar" : "Colapsar sidebar"}
+        >
+          &#10094;
+        </button>
+      </div>
 
+      {/* MODALES */}
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <Modal.Header onClose={() => setIsOpen(false)}>Crear Proyecto</Modal.Header>
         <Modal.Body>
-        <Input 
-          label="Nombre del proyecto"
-          type="text"
-          placeholder="Escribe el nombre de tu proyecto"
-          value={project_name}
-          onChange={e => setProjectName(e.target.value)}
-        />
-        <Textarea
-          label="Descripción del proyecto"
-          type="text"
-          placeholder="Danos una breve descripcion de tu proyecto"
-          value={project_description}
-          onChange={e => setProjectDescription(e.target.value)}
-        />
+          <Input 
+            label="Nombre del proyecto"
+            type="text"
+            placeholder="Escribe el nombre de tu proyecto"
+            value={project_name}
+            onChange={e => setProjectName(e.target.value)}
+          />
+          <Textarea
+            label="Descripción del proyecto"
+            type="text"
+            placeholder="Danos una breve descripcion de tu proyecto"
+            value={project_description}
+            onChange={e => setProjectDescription(e.target.value)}
+          />
         </Modal.Body>
         <Modal.Footer onClose={() => setIsOpen(false)}>
           <Modal.AcceptButton type="button" onClick={handleCreateProject}>Crear</Modal.AcceptButton>
@@ -199,11 +218,10 @@ const SecondSidebar = ({ groupId }) => {
             value={activity_description}
             onChange={e => setActivityDescription(e.target.value)}
           />
-          
           <Select
             label="Estado de la actividad"
             value={activity_status}
-            onChange={(e) => setActivityStatus(e.target.value)}
+            onChange={e => setActivityStatus(e.target.value)}
             options={[
               { value: "in_progress", label: "In progress" },
               { value: "done", label: "Done" },
@@ -227,14 +245,14 @@ const SecondSidebar = ({ groupId }) => {
           <Modal.AcceptButton type="button" onClick={handleCreateActivity}>Crear</Modal.AcceptButton>
         </Modal.Footer>
       </Modal>
-      
+
       <EditActivityModal
         isOpen={isEditActivityOpen}
         onClose={() => setIsEditActivityOpen(false)}
         activityId={editingActivityId}
         onUpdated={() => loadDetails()}
       />
-    </aside>
+    </>
   );
 };
 

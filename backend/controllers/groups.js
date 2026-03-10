@@ -5,24 +5,42 @@ const verifyToken = require("../middleware/verifyToken");
 
 // Crear grupo
 router.post("/groups", verifyToken, async (req, res) => {
-  const { name } = req.body;
+  const { name, collaborators = [] } = req.body;
   const adminId = req.userId;
 
   if (!name) return res.status(400).json({ message: "Nombre requerido" });
 
   try {
+    // Crear el grupo
     const result = await query(
       "INSERT INTO groups (name, admin_id) VALUES (?, ?)",
       [name, adminId]
     );
     const groupId = result.insertId;
 
+    // Insertar al admin en user_groups
     await query(
       "INSERT INTO user_groups (user_id, group_id) VALUES (?, ?)",
       [adminId, groupId]
     );
 
-    res.json({ id: groupId, name, admin_id: adminId });
+    // Insertar a los colaboradores
+    if (collaborators.length > 0) {
+      const values = collaborators.map(userId => [userId, groupId]); // [[2, 10], [5, 10], ...]
+      
+      // Ejecutar un solo INSERT con múltiples filas
+      await query(
+        "INSERT INTO user_groups (user_id, group_id) VALUES ?",
+        [values]
+      );
+    }
+
+    res.json({
+      id: groupId,
+      name,
+      admin_id: adminId,
+      collaborators,
+    });
 
   } catch (err) {
     console.error("ERROR DB GROUP:", err);

@@ -8,6 +8,8 @@
   left: 0;
   overflow-y: auto;
   scrollbar-width: none;
+
+  z-index: 20;
 }
 
 .sidebar .button-general,

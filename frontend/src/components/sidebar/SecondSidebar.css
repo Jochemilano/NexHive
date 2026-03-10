@@ -1,29 +1,31 @@
+/* --------------------- SECOND SIDEBAR --------------------- */
 .second-sidebar {
   position: absolute;
   top: 2rem;
-  left: 3.5rem;
-  width: 200px;
+  left: 3.5rem; /* pegada a la sidebar principal */
+  width: 200px; /* ancho normal */
   height: calc(100vh - 2rem);
-  
   background-color: var(--bg-soft);
   color: var(--text-primary);
   padding: 10px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  z-index: 10;
+  z-index: 11; /* encima de sidebar */
   overflow-y: auto;
   scrollbar-width: none;
+  transition: transform 0.3s ease;
 }
 
-/*conetendor separador*/
-.cont-sec{
+/* --------------------- CONTENEDOR SEPARADOR --------------------- */
+.cont-sec {
   display: flex;
   align-items: center;
   height: 2rem;
 }
-.cont-sec .modal-button{
-  margin: 0 0 0 auto;
+
+.cont-sec .modal-button {
+  margin-left: auto;
   width: 1.5rem;
   border: none;
   background: none;
@@ -31,12 +33,12 @@
   cursor: pointer;
   transition: 0.3s ease;
 }
-.cont-sec .modal-button:hover{
+
+.cont-sec .modal-button:hover {
   transform: scale(1.1);
 }
 
-/*actividades*/
-
+/* --------------------- ACTIVIDADES --------------------- */
 .project-header {
   font-weight: 600;
   margin-left: 0.5rem;
@@ -44,8 +46,9 @@
   align-items: center;
   height: 1.5rem;
 }
-.project-header .add-activity-btn{
-  margin: 0 0 0 auto;
+
+.project-header .add-activity-btn {
+  margin-left: auto;
   border: none;
   background: none;
   width: 1.5rem;
@@ -65,12 +68,63 @@
   color: #888;
 }
 
-.activity-item{
+.activity-item {
   margin-left: 0.5rem;
-  padding-left:0.2rem;
+  padding-left: 0.2rem;
   border-radius: 5px;
   cursor: pointer;
 }
-.activity-item:hover{
+
+.activity-item:hover {
   background-color: gray;
+}
+
+/* --------------------- SIDEBAR RETRACTIL --------------------- */
+
+/* Colapsar second-sidebar dejando visible la pestañita */
+.second-sidebar.collapsed {
+  transform: translateX(-180px); /* se esconde dejando la pestañita visible */
+  overflow: hidden;
+}
+
+/* Ocultar contenido interno cuando colapsada */
+.second-sidebar.collapsed .sidebar-content {
+  display: none;
+}
+
+/* --------------------- PESTAÑITA BOTÓN (AHORA FUERA) --------------------- */
+/* Pestañita botón fuera de second-sidebar, pero no encima del chat */
+.retract-button {
+  position: absolute; /* relativo al contenedor padre que englobe sidebar + second-sidebar */
+  top: 2rem;          /* alineado con la second-sidebar */
+  left: 203.5px;      /* pegado al borde derecho de la sidebar principal + un px de separación */
+  width: 20px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-soft);
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  z-index: 12; /* debajo del chat */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Flecha dentro del botón */
+.retract-button button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+/* Rotación de flecha al colapsar */
+.second-sidebar.collapsed ~ .retract-button button {
+  transform: rotate(180deg);
+}
+
+/* Ajuste del botón cuando la sidebar está colapsada */
+.second-sidebar.collapsed ~ .retract-button {
+  left: 35px; /* se mantiene visible sobresaliendo */
 }

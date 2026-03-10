@@ -12,6 +12,7 @@ export async function login(email, password) {
     // Guardar token en localStorage para usar en llamadas futuras
     if (data.token) {
       localStorage.setItem("token", data.token);
+      localStorage.setItem("userId", data.user.id);
     }
 
     // Devuelve el user y token

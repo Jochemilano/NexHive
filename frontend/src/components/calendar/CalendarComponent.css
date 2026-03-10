@@ -19,3 +19,7 @@
 .rbc-off-range-bg {
     background: var(--bg-soft);
 }
+
+.rbc-today {
+    background-color: var(--primary-hover);
+}

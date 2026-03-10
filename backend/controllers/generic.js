@@ -32,4 +32,15 @@ router.get("/users", async (req, res) => {
   }
 });
 
+//Traer todos los usuarios
+router.get("/allusers", async (req, res) => {
+  try {
+    const [results] = await db.query(`SELECT id, name FROM users`);
+    res.json(results);
+  } catch (err) {
+    console.error("ERROR GET USERS:", err);
+    res.status(500).json({ message: "Error obteniendo usuarios" });
+  }
+});
+
 module.exports = router;
