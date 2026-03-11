@@ -11,35 +11,73 @@ router.post("/groups", verifyToken, async (req, res) => {
   if (!name) return res.status(400).json({ message: "Nombre requerido" });
 
   try {
-    // Crear el grupo
+    // 1️⃣ Crear grupo
     const result = await query(
       "INSERT INTO groups (name, admin_id) VALUES (?, ?)",
       [name, adminId]
     );
     const groupId = result.insertId;
 
-    // Insertar al admin en user_groups
+    // 2️⃣ Insertar admin en user_groups
     await query(
       "INSERT INTO user_groups (user_id, group_id) VALUES (?, ?)",
       [adminId, groupId]
     );
 
-    // Insertar a los colaboradores
+    // 3️⃣ Insertar colaboradores en user_groups
     if (collaborators.length > 0) {
-      const values = collaborators.map(userId => [userId, groupId]); // [[2, 10], [5, 10], ...]
-      
-      // Ejecutar un solo INSERT con múltiples filas
+      const values = collaborators.map(userId => [userId, groupId]);
       await query(
         "INSERT INTO user_groups (user_id, group_id) VALUES ?",
         [values]
       );
     }
 
+    const allUsers = [adminId, ...collaborators];
+
+    // 4️⃣ Crear room de CHAT
+    const chatRoom = await query(
+      "INSERT INTO rooms (name, type, created_by) VALUES (?, ?, ?)",
+      ["general-chat", "chat", adminId]
+    );
+    const chatRoomId = chatRoom.insertId;
+
+    // 5️⃣ Crear room de VOZ
+    const voiceRoom = await query(
+      "INSERT INTO rooms (name, type, created_by) VALUES (?, ?, ?)",
+      ["general-voice", "voice", adminId]
+    );
+    const voiceRoomId = voiceRoom.insertId;
+
+    // 6️⃣ Agregar todos los usuarios a los rooms
+    if (allUsers.length > 0) {
+      const chatValues = allUsers.map(userId => [chatRoomId, userId]);
+      await query(
+        "INSERT INTO room_participants (room_id, user_id) VALUES ?",
+        [chatValues]
+      );
+
+      const voiceValues = allUsers.map(userId => [voiceRoomId, userId]);
+      await query(
+        "INSERT INTO room_participants (room_id, user_id) VALUES ?",
+        [voiceValues]
+      );
+    }
+
+    // 7️⃣ Crear registro en channels
+    await query(
+      "INSERT INTO channels (group_id, voice_room_id, chat_room_id) VALUES (?, ?, ?)",
+      [groupId, voiceRoomId, chatRoomId]
+    );
+
+    // 8️⃣ Devolver respuesta
     res.json({
       id: groupId,
       name,
       admin_id: adminId,
-      collaborators,
+      chat_room_id: chatRoomId,
+      voice_room_id: voiceRoomId,
+      collaborators
     });
 
   } catch (err) {
@@ -80,7 +118,10 @@ router.get("/groups/:groupId/details", verifyToken, async (req, res) => {
 
     if (userGroup.length === 0) return res.status(403).json({ message: "No pertenece al grupo" });
 
-    const channels = await query("SELECT id FROM channels WHERE group_id=?", [groupId]);
+    const channels = await query(
+      "SELECT id, chat_room_id, voice_room_id FROM channels WHERE group_id=?",
+      [groupId]
+    );
 
     const projects = await query(
       `SELECT p.id AS project_id, p.name AS project_name,

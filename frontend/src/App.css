@@ -4,62 +4,41 @@
   --radius-pill: 40rem;
   --radius-search: 8px;
 
+ /* Fondos */
+  --bg-base: #F7F8FC;      /* Fondo general */
+  --bg-soft: #EBECF2;      /* Fondo secundario */
+  --bg-cards: #ffffff;     /* Tarjetas y modales */
+
   /* Texto */
-  --text-primary: #2b2b2b;
-  --text-secondary: #6b7280;
+  --text-primary: #2A2E33;
+  --text-secondary: #3F435D;
 
-  /* Fondos */
-  --bg-base: #ffffff;
-  --bg-soft: #f5f5f5;
-
-  /* Marca */
-  --primary: #6d92f7;
-  --primary-hover: #dfe7ff;
+  /* Marca / Botones / Eventos */
+  --primary: #1976c9;
+  --primary-hover: #90c8ff;
 
   /* Estados */
   --success: #16a34a;
   --error: #dc2626;
+
+  /* Sombra */
+  --shadow: rgba(0,0,0,0.2);
 }
 
-.theme-dark {
-  /* Texto */
-  --text-primary: #f9fafb;
-  /*texto primario paara probar#D4D4D4*/
-  --text-secondary: #9ca3af;
-
-  /* Fondos */
-  --bg-base: #111827;
-  --bg-soft: #1f2937;
-
-  /* Marca */
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-}
-
-.theme-black {
-  /* Texto */
-  --text-primary: #ffffff;
-  --text-secondary: #a1a1aa;
-
-  /* Fondos */
-  --bg-base: #000000;
-  --bg-soft: #18181b;
-
-  /* Marca */
-  --primary: #e5e5e5;
-  --primary-hover: #ffffff;
-}
-
+/* ----------------- PALETA MORADA ----------------- */
 .theme-purple {
-  /* Texto */
+  --bg-base: #140f2d;
+  --bg-soft: #1e1b4b;
+  --bg-cards: #140f2d;
+
   --text-primary: #f5f3ff;
   --text-secondary: #c4b5fd;
 
-  /* Fondos */
-  --bg-base: #140f2d;
-  --bg-soft: #1e1b4b;
-
-  /* Marca */
   --primary: #7c3aed;
   --primary-hover: #6d28d9;
+
+  --success: #16a34a;
+  --error: #dc2626;
+
+  --shadow: rgba(0,0,0,0.2);
 }

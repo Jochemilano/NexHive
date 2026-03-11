@@ -28,7 +28,7 @@ const EditActivityModal = ({ isOpen, onClose, activityId, onUpdated }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await getActivityDetails(activityId); // usa utils
+        const data = await getActivityDetails(activityId);
         setActivityData({
           name: data.name,
           description: data.description,

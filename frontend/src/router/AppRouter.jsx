@@ -7,6 +7,8 @@ import Saved from 'pages/Saved';
 import GroupPage from 'pages/GroupPage';
 import Home from 'pages/Home';
 import Call from "pages/Call";
+import ChatWrapper from'components/chat/ChatWrapper';
+import VoiceRoomWrapper from 'components/chat/VoiceRoomWrapper';
 
 export default function AppRouter() {
   return (
@@ -17,6 +19,8 @@ export default function AppRouter() {
         <Route path="/call" element={<Call />} />
         <Route path="/calendar" element={<Calendar />} />
         <Route path="groups/:groupId" element={<GroupPage />} />
+        <Route path="/groups/:groupId/chat/:chatRoomId" element={<ChatWrapper />} />
+        <Route path="/groups/:groupId/voice/:voiceRoomId" element={<VoiceRoomWrapper />} />
       </Route>
 
       <Route path="/login" element={<Login />} />

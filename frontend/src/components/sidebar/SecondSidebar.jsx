@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { fetchGroupDetails } from "utils/groups";
 import "./SecondSidebar.css";
 import { createProject } from "utils/projects";
-import { Input, Textarea, Select } from "components/input/Input";
 import Modal from "components/modal/Modal";
-import { IoEllipsisHorizontal } from "react-icons/io5";
 import { createActivity, getActivities } from "utils/activities";
-import EditActivityModal from "components/groups/EditActivityModal";
+import EditActivityModal from "components/sidebar/EditActivityModal";
+import CreateActivityModal from "components/sidebar/CreateActivityModal";
+import CreateProjectModal from "components/sidebar/CreateProjectModal";
+import { useNavigate } from "react-router-dom";
 
 
 const SecondSidebar = ({ groupId }) => {
-  const today = new Date().toISOString().split("T")[0];
   const [details, setDetails] = useState({ channels: [], projects: [] });
   const [isOpen, setIsOpen] = useState(false);
   const [isActivityOpen, setIsActivityOpen] = useState(false);
@@ -24,39 +24,15 @@ const SecondSidebar = ({ groupId }) => {
   const [activity_deadline, setDeadline] = useState("");
   const [isEditActivityOpen, setIsEditActivityOpen] = useState(false);
   const [editingActivityId, setEditingActivityId] = useState(null);
-
-// CAMBIO: estado para sidebar retractil
-const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
+  
 
   const loadDetails = async () => {
     if (!groupId) return;
     try {
-      const data = await fetchGroupDetails(groupId); // ya usa apiClient
-      const projectsMap = {};
-      data.projects.forEach(row => {
-        if (!projectsMap[row.project_id]) {
-          projectsMap[row.project_id] = {
-            id: row.project_id,
-            name: row.project_name,
-            activities: []
-          };
-        }
-        if (row.activity_id) {
-          projectsMap[row.project_id].activities.push({
-            id: row.activity_id,
-            name: row.activity_name,
-            description: row.activity_description,
-            status: row.activity_status,
-            start_date: row.start_date ? new Date(row.start_date) : null,
-            deadline: row.deadline ? new Date(row.deadline) : null
-          });
-        }
-      });
-
-      setDetails({
-        channels: data.channels,
-        projects: Object.values(projectsMap)
-      });
+      const data = await fetchGroupDetails(groupId);
+      setDetails(data);
     } catch (err) {
       console.error("Error cargando detalles del grupo:", err);
       setDetails({ channels: [], projects: [] });
@@ -70,7 +46,7 @@ const [collapsed, setCollapsed] = useState(false);
   const handleCreateProject = async () => {
     if (!project_name.trim()) return;
     try {
-      const newProject = await createProject(project_name,project_description, groupId); // apiClient maneja headers
+      const newProject = await createProject(project_name,project_description, groupId);
       setDetails(prev => ({
         ...prev,
         projects: [...prev.projects, newProject]
@@ -118,16 +94,39 @@ const [collapsed, setCollapsed] = useState(false);
     <>
       {/* SECOND SIDEBAR */}
       <aside className={`second-sidebar ${collapsed ? "collapsed" : ""}`}>
+        {/* Botón pestañita dentro del aside */}
+        <div className="retract-button">
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            aria-label={collapsed ? "Expandir sidebar" : "Colapsar sidebar"}
+          >
+            &#10094;
+          </button>
+        </div>
+
+        {/* Contenido */}
         {!collapsed && (
           <div className="sidebar-content">
-            <h3>Canales</h3>
-            {details.channels.map(c => <div key={c.id}>{c.name}</div>)}
+            {details.channels.map(c => (
+              <div key={c.id} style={{ marginBottom: "10px" }}>
+                <button
+                  style={{ display: "block", marginBottom: "5px" }}
+                  onClick={() => navigate(`/groups/${groupId}/chat/${c.chat_room_id}`)}
+                >
+                  Chat #{c.chat_room_id}
+                </button>
+                <button
+                  style={{ display: "block" }}
+                  onClick={() => navigate(`/groups/${groupId}/voice/${c.voice_room_id}`)}
+                >
+                  Voz #{c.voice_room_id}
+                </button>
+              </div>
+            ))}
 
             <div className="cont-sec">
               <h3>Proyectos</h3>
-              <Modal.Button onClick={() => setIsOpen(true)}>
-                <IoEllipsisHorizontal />
-              </Modal.Button>
+              <Modal.Button onClick={() => setIsOpen(true)}>+</Modal.Button>
             </div>
 
             {details.projects.map(p => (
@@ -145,21 +144,21 @@ const [collapsed, setCollapsed] = useState(false);
                 </div>
 
                 <div className="project-activities">
-                  {p.activities?.length > 0
-                    ? p.activities.map(a => (
-                        <div
-                          key={`activity-${a.id}`}
-                          className="activity-item"
-                          onClick={() => {
-                            setCurrentProjectId(p.id);
-                            setEditingActivityId(a.id);
-                            setIsEditActivityOpen(true);
-                          }}
-                        >
-                          {a.name}
-                        </div>
-                      ))
-                    : <span className="empty-activities">Sin actividades</span>}
+                {p.activities?.length > 0
+                ? p.activities.map(a => (
+                    <div
+                      key={`activity-${a.id ?? Math.random()}`}
+                      className="activity-item"
+                      onClick={() => {
+                        setCurrentProjectId(p.id);
+                        setEditingActivityId(a.id);
+                        setIsEditActivityOpen(true);
+                      }}
+                    >
+                      {a.name || "Sin nombre"}
+                    </div>
+                  ))
+                : <span className="empty-activities">Sin actividades</span>}
                 </div>
               </div>
             ))}
@@ -167,85 +166,33 @@ const [collapsed, setCollapsed] = useState(false);
         )}
       </aside>
 
-      {/* BOTÓN RETRACTIL FUERA DEL ASIDE */}
-      <div className="retract-button">
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          aria-label={collapsed ? "Expandir sidebar" : "Colapsar sidebar"}
-        >
-          &#10094;
-        </button>
-      </div>
-
-      {/* MODALES */}
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <Modal.Header onClose={() => setIsOpen(false)}>Crear Proyecto</Modal.Header>
-        <Modal.Body>
-          <Input 
-            label="Nombre del proyecto"
-            type="text"
-            placeholder="Escribe el nombre de tu proyecto"
-            value={project_name}
-            onChange={e => setProjectName(e.target.value)}
-          />
-          <Textarea
-            label="Descripción del proyecto"
-            type="text"
-            placeholder="Danos una breve descripcion de tu proyecto"
-            value={project_description}
-            onChange={e => setProjectDescription(e.target.value)}
-          />
-        </Modal.Body>
-        <Modal.Footer onClose={() => setIsOpen(false)}>
-          <Modal.AcceptButton type="button" onClick={handleCreateProject}>Crear</Modal.AcceptButton>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal isOpen={isActivityOpen} onClose={() => setIsActivityOpen(false)}>
-        <Modal.Header onClose={() => setIsActivityOpen(false)}>Crear Actividad</Modal.Header>
-        <Modal.Body>
-          <Input
-            label="Nombre de la actividad"
-            type="text"
-            placeholder="¿Qué vas a hacer?"
-            value={activity_name}
-            onChange={e => setActivityName(e.target.value)}
-          />
-          <Textarea
-            label="Descripción de la actividad"
-            type="text"
-            placeholder="¿Cómo lo vas a hacer?, ¿Algo mas que comentar?"
-            value={activity_description}
-            onChange={e => setActivityDescription(e.target.value)}
-          />
-          <Select
-            label="Estado de la actividad"
-            value={activity_status}
-            onChange={e => setActivityStatus(e.target.value)}
-            options={[
-              { value: "in_progress", label: "In progress" },
-              { value: "done", label: "Done" },
-              { value: "pending", label: "Pending" },
-            ]}
-          />
-          <Input
-            label="Fecha de inicio"
-            type="datetime-local"
-            value={activity_startDate}
-            onChange={e => setStartDate(e.target.value)}
-          />
-          <Input
-            label="Fecha de entrega"
-            type="datetime-local"
-            value={activity_deadline}
-            onChange={e => setDeadline(e.target.value)}
-          />
-        </Modal.Body>
-        <Modal.Footer onClose={() => setIsActivityOpen(false)}>
-          <Modal.AcceptButton type="button" onClick={handleCreateActivity}>Crear</Modal.AcceptButton>
-        </Modal.Footer>
-      </Modal>
-
+      
+      <CreateProjectModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        groupId={groupId}
+        onCreated={(newProject) => {
+          setDetails(prev => ({
+            ...prev,
+            projects: [...prev.projects, newProject]
+          }));
+        }}
+      />
+      <CreateActivityModal
+        isOpen={isActivityOpen}
+        onClose={() => setIsActivityOpen(false)}
+        currentProjectId={currentProjectId}
+        onCreated={(newActivity) => {
+          setDetails(prev => ({
+            ...prev,
+            projects: prev.projects.map(p =>
+              p.id === currentProjectId
+                ? { ...p, activities: [...(p.activities || []), newActivity] }
+                : p
+            )
+          }));
+        }}
+      />
       <EditActivityModal
         isOpen={isEditActivityOpen}
         onClose={() => setIsEditActivityOpen(false)}

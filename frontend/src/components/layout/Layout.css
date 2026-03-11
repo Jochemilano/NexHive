@@ -7,18 +7,19 @@
   width: 100vw;
 }
 
-/* Envuelve TopBar y main */
 .content-area {
+  display: flex;
   flex-direction: column;
   height: 100vh;
-  display: flex;
   flex: 1;
+  min-width: 0;
 }
 
 .main-content {
   background-color: var(--bg-base);
-  margin-left: calc(3.5rem + 200px);
   flex: 1;
+  min-width: 0;
   padding: 1rem;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
-

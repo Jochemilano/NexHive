@@ -3,7 +3,8 @@ import CalendarComponent from 'components/calendar/CalendarComponent';
 import CreateEventModal from 'components/calendar/CreateEventModal';
 import { createPersonalEvent, getPersonalEvents, deletePersonalEvent } from 'utils/calendar-create-event';
 import EditPersonalEventModal from 'components/calendar/EditPersonalEventModal';
-import EditActivityModal from 'components/groups/EditActivityModal';
+import EditActivityModal from 'components/sidebar/EditActivityModal';
+import '../styles.css';
 
 const Calendar = () => {
   const [events, setEvents] = useState([]);

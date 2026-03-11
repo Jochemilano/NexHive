@@ -1,25 +1,91 @@
-.calendar-container{
-    margin-top: 1.5rem;
+/* --------------------- CONTENEDOR --------------------- */
+.calendar-container {
+    background-color: var(--bg-cards);
+    border-radius: var(--radius-search);
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.calendar-delete-btn{
-    border-radius: var(--radius-pill);
-    height: 2rem;
-    width: 5rem;
-    border: 1px solid var(--text-secondary);
-    color: var(--bg-base);
-    transition: 0.3s ease;
-    background-color: var(--error);
+/* --------------------- FIX ALINEACIÓN --------------------- */
+.rbc-time-header.rbc-overflowing {
+    margin-right: 0 !important;
+    padding-right: 0 !important;
 }
 
-.calendar-delete-btn:hover{
-    transform: scale(1.1);
+.rbc-time-content {
+    overflow-y: scroll !important; 
+    border-right: none !important;
+    background-color: var(--bg-cards);
 }
 
-.rbc-off-range-bg {
-    background: var(--bg-soft);
+/* --------------------- EVENTOS (FINOS Y ELEGANTES) --------------------- */
+.rbc-event {
+    background-color: var(--primary) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
+.rbc-event:hover {
+    transform: translateY(-1px);
+    filter: brightness(0.9); 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* --------------------- DIA ACTUAL --------------------- */
 .rbc-today {
-    background-color: var(--primary-hover);
+    background-color: rgba(25, 118, 201, 0.05) !important; 
+}
+
+.rbc-header.rbc-today span a {
+    background-color: var(--primary);
+    color: white !important;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+/* --------------------- LÍNEAS (CASI INVISIBLES) --------------------- */
+.rbc-day-slot, 
+.rbc-time-slot, 
+.rbc-timeslot-group, 
+.rbc-time-content, 
+.rbc-month-view, 
+.rbc-month-row {
+    border-color: #f1f1f4 !important; 
+}
+
+/* --------------------- SCROLLBAR FINO --------------------- */
+.rbc-time-content::-webkit-scrollbar {
+    width: 4px; 
+}
+
+.rbc-time-content::-webkit-scrollbar-thumb {
+    background: var(--bg-soft);
+    border-radius: 10px;
+}
+
+/* --------------------- BOTÓN ELIMINAR --------------------- */
+.calendar-delete-btn {
+    border-radius: var(--radius-pill);
+    height: 2.2rem;
+    padding: 0 1.2rem;
+    border: none;
+    color: white;
+    font-weight: 600;
+    background-color: var(--error);
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+.calendar-delete-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.3);
 }

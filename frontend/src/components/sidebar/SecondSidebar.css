@@ -1,23 +1,67 @@
 /* --------------------- SECOND SIDEBAR --------------------- */
 .second-sidebar {
-  position: absolute;
-  top: 2rem;
-  left: 3.5rem; /* pegada a la sidebar principal */
-  width: 200px; /* ancho normal */
-  height: calc(100vh - 2rem);
+  position: relative;
+  width: 200px;
+  height: 100vh;
   background-color: var(--bg-soft);
   color: var(--text-primary);
   padding: 10px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  z-index: 11; /* encima de sidebar */
-  overflow-y: auto;
-  scrollbar-width: none;
+  z-index: 11;
+  flex-shrink: 0; 
+  transition: width 0.3s ease, padding 0.3s ease;
+  
+  /* CLAVE: Permitir que el botón sobresalga aunque la barra mida 0px */
+  overflow: visible; 
+}
+
+/* --------------------- SIDEBAR COLAPSADA --------------------- */
+.second-sidebar.collapsed {
+  width: 0px;
+  padding-left: 0;
+  padding-right: 0;
+  border: none;
+}
+
+/* Escondemos todo lo que hay dentro de la barra excepto el botón */
+.second-sidebar.collapsed > *:not(.retract-button) {
+  display: none;
+}
+
+/* --------------------- BOTON PESTAÑA --------------------- */
+.retract-button {
+  position: absolute;
+  top: 1rem;
+  right: -20px; 
+  width: 20px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-soft);
+  border-radius: 0 6px 6px 0;
+  cursor: pointer;
+  z-index: 100; 
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.retract-button button {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  cursor: pointer;
   transition: transform 0.3s ease;
 }
 
-/* --------------------- CONTENEDOR SEPARADOR --------------------- */
+.second-sidebar.collapsed .retract-button button {
+  transform: rotate(180deg);
+}
+
+/* --------------------- CONTENEDORES Y PROYECTOS --------------------- */
+
 .cont-sec {
   display: flex;
   align-items: center;
@@ -29,16 +73,11 @@
   width: 1.5rem;
   border: none;
   background: none;
-  color: var(--texto-primary);
+  color: var(--text-primary);
   cursor: pointer;
-  transition: 0.3s ease;
+  transition: 0.2s;
 }
 
-.cont-sec .modal-button:hover {
-  transform: scale(1.1);
-}
-
-/* --------------------- ACTIVIDADES --------------------- */
 .project-header {
   font-weight: 600;
   margin-left: 0.5rem;
@@ -52,20 +91,13 @@
   border: none;
   background: none;
   width: 1.5rem;
-  color: var(--texto-primary);
+  color: var(--text-primary);
   cursor: pointer;
-  transition: 0.3s ease;
 }
 
 .project-activities {
   margin-left: 0.5rem;
-  overflow-x: hidden;
-  background: none;
   font-size: 12px;
-}
-
-.empty-activities {
-  color: #888;
 }
 
 .activity-item {
@@ -77,54 +109,4 @@
 
 .activity-item:hover {
   background-color: gray;
-}
-
-/* --------------------- SIDEBAR RETRACTIL --------------------- */
-
-/* Colapsar second-sidebar dejando visible la pestañita */
-.second-sidebar.collapsed {
-  transform: translateX(-180px); /* se esconde dejando la pestañita visible */
-  overflow: hidden;
-}
-
-/* Ocultar contenido interno cuando colapsada */
-.second-sidebar.collapsed .sidebar-content {
-  display: none;
-}
-
-/* --------------------- PESTAÑITA BOTÓN (AHORA FUERA) --------------------- */
-/* Pestañita botón fuera de second-sidebar, pero no encima del chat */
-.retract-button {
-  position: absolute; /* relativo al contenedor padre que englobe sidebar + second-sidebar */
-  top: 2rem;          /* alineado con la second-sidebar */
-  left: 203.5px;      /* pegado al borde derecho de la sidebar principal + un px de separación */
-  width: 20px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--bg-soft);
-  border-radius: 0 5px 5px 0;
-  cursor: pointer;
-  z-index: 12; /* debajo del chat */
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-/* Flecha dentro del botón */
-.retract-button button {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-/* Rotación de flecha al colapsar */
-.second-sidebar.collapsed ~ .retract-button button {
-  transform: rotate(180deg);
-}
-
-/* Ajuste del botón cuando la sidebar está colapsada */
-.second-sidebar.collapsed ~ .retract-button {
-  left: 35px; /* se mantiene visible sobresaliendo */
 }

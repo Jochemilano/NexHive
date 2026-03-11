@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { socket, joinRoom, sendMessage } from "socket";
 import { apiFetch } from "utils/apiClient";
+const userId = parseInt(localStorage.getItem("userId"));
 
 const Chat = ({ roomId, userId }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  
 
   useEffect(() => {
     // 1️⃣ Cargar mensajes históricos con apiFetch
