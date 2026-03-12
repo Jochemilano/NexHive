@@ -11,23 +11,28 @@
   box-sizing: border-box;
   z-index: 11;
   flex-shrink: 0; 
-  transition: width 0.3s ease, padding 0.3s ease;
-  
-  /* CLAVE: Permitir que el botón sobresalga aunque la barra mida 0px */
+  transition: width 0.4s ease, padding 0.4s ease;
   overflow: visible; 
 }
 
-/* --------------------- SIDEBAR COLAPSADA --------------------- */
-.second-sidebar.collapsed {
-  width: 0px;
+/* --------------------- SIDEBAR MINIMIZADA --------------------- */
+.second-sidebar.minimized {
+  width: 0;
   padding-left: 0;
   padding-right: 0;
-  border: none;
 }
 
-/* Escondemos todo lo que hay dentro de la barra excepto el botón */
-.second-sidebar.collapsed > *:not(.retract-button) {
-  display: none;
+/* --------------------- CONTENIDO DE LA SIDEBAR --------------------- */
+.sidebar-content {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 1;
+  width: 180px; 
+}
+
+.second-sidebar.minimized .sidebar-content {
+  opacity: 0;
+  transform: translateX(-10px);
+  pointer-events: none;
 }
 
 /* --------------------- BOTON PESTAÑA --------------------- */
@@ -45,6 +50,7 @@
   cursor: pointer;
   z-index: 100; 
   box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  transition: right 0.4s ease;
 }
 
 .retract-button button {
@@ -53,15 +59,15 @@
   font-size: 1.1rem;
   color: var(--text-primary);
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s ease;
+  display: inline-block;
 }
 
-.second-sidebar.collapsed .retract-button button {
+.second-sidebar.minimized .retract-button button {
   transform: rotate(180deg);
 }
 
 /* --------------------- CONTENEDORES Y PROYECTOS --------------------- */
-
 .cont-sec {
   display: flex;
   align-items: center;

@@ -50,11 +50,11 @@ const Chat = ({ roomId, userId }) => {
   return (
     <div>
       <div style={{ border: "1px solid #ccc", height: "300px", overflowY: "scroll", padding: "10px" }}>
-        {messages.map((msg) => (
-          <div key={msg.id}>
-            <b>{msg.sender_name || msg.senderId}:</b> {msg.content}
-          </div>
-        ))}
+      {messages.map((msg) => (
+        <div key={msg.id ?? Math.random()}>
+          <b>{msg.sender_name || msg.senderId}:</b> {msg.content}
+        </div>
+      ))}
       </div>
 
       <input

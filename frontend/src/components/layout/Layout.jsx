@@ -9,7 +9,7 @@ export default function Layout() {
   return (
     <div className="layout">
       <Sidebar />
-      <SecondSidebar />
+      <SecondSidebar/>
       <div className="content-area">
         <TopBar />
         <main className="main-content">

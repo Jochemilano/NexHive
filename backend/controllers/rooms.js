@@ -32,6 +32,24 @@ router.post("/rooms", verifyToken, async (req, res) => {
   }
 });
 
+// Listar salas del usuario
+router.get("/rooms", verifyToken, async (req, res) => {
+  const userId = req.userId;
+  try {
+    const [rooms] = await db.query(
+      `SELECT r.id, r.name
+       FROM rooms r
+       JOIN room_participants rp ON r.id = rp.room_id
+       WHERE rp.user_id = ?`,
+      [userId]
+    );
+    res.json(rooms);
+  } catch (err) {
+    console.error("ERROR GET USER ROOMS:", err);
+    res.status(500).json({ message: "Error obteniendo salas" });
+  }
+});
+
 // Traer mensajes de sala
 router.get("/rooms/:roomId/messages", verifyToken, async (req, res) => {
   const { roomId } = req.params;
@@ -86,5 +104,6 @@ router.post("/messages", verifyToken, async (req, res) => {
     res.status(500).json({ message: "Error enviando mensaje" });
   }
 });
+
 
 module.exports = router;

@@ -21,6 +21,7 @@ export default function AppRouter() {
         <Route path="groups/:groupId" element={<GroupPage />} />
         <Route path="/groups/:groupId/chat/:chatRoomId" element={<ChatWrapper />} />
         <Route path="/groups/:groupId/voice/:voiceRoomId" element={<VoiceRoomWrapper />} />
+        <Route path="/chat/:chatRoomId" element={<ChatWrapper />} />
       </Route>
 
       <Route path="/login" element={<Login />} />

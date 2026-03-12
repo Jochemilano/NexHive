@@ -15,7 +15,7 @@ const Sidebar = () => {
   const [name, setName] = useState("");
   const [groups, setGroups] = useState([]);
   
-  // ✅ Estados para colaboradores
+  // Estados para colaboradores
   const [allUsers, setAllUsers] = useState([]);
   const [selectedCollaborators, setSelectedCollaborators] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
