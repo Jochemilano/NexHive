@@ -8,6 +8,8 @@ import CreateActivityModal from "components/sidebar/CreateActivityModal";
 import CreateProjectModal from "components/sidebar/CreateProjectModal";
 import { useNavigate } from "react-router-dom";
 
+import { FaHashtag, FaVolumeUp } from "react-icons/fa";
+
 const GroupSecondSidebar = ({ groupId }) => {
   const [details, setDetails] = useState({ channels: [], projects: [] });
   const [isOpen, setIsOpen] = useState(false);
@@ -34,24 +36,28 @@ const GroupSecondSidebar = ({ groupId }) => {
 
   return (
     <>
-      <aside className="second-sidebar">
         <div className="sidebar-content">
           {details.channels.map(c => (
-            <div key={c.id} style={{ marginBottom: "10px" }}>
-              <button
-                style={{ display: "block", marginBottom: "5px" }}
-                onClick={() => navigate(`/groups/${groupId}/chat/${c.chat_room_id}`)}
-              >
-                Chat #{c.chat_room_id}
-              </button>
-              <button
-                style={{ display: "block" }}
-                onClick={() => navigate(`/groups/${groupId}/voice/${c.voice_room_id}`)}
-              >
-                Voz #{c.voice_room_id}
-              </button>
+          <div key={c.id} className="channel-group" style={{ padding: "0 0.5rem", marginBottom: "1rem" }}>
+            <h3>Canales</h3>
+            
+            <div 
+              className="user-item" 
+              onClick={() => navigate(`/groups/${groupId}/chat/${c.chat_room_id}`)}
+            >
+              <FaHashtag style={{ marginRight: "8px", fontSize: "0.8rem" }} />
+              <span>Mensajes</span>
             </div>
-          ))}
+
+            <div 
+              className="user-item" 
+              onClick={() => navigate(`/groups/${groupId}/voice/${c.voice_room_id}`)}
+            >
+              <FaVolumeUp style={{ marginRight: "8px", fontSize: "0.8rem" }} />
+              <span>Sala de voz</span>
+            </div>
+          </div>
+        ))}
 
           <div className="cont-sec">
             <h3>Proyectos</h3>
@@ -91,7 +97,6 @@ const GroupSecondSidebar = ({ groupId }) => {
             </div>
           ))}
         </div>
-      </aside>
 
       <CreateProjectModal
         isOpen={isOpen}

@@ -2,31 +2,99 @@
   background-color: var(--bg-soft);
   height: 100vh;
   position: relative;
-  width: 3.5rem;
+  width: 4.5rem; 
   display: flex;
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
+  /* scroll cuando hay muchos grupos */
   overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-width: none;
-
   z-index: 20;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
 }
 
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Contenedor de cada item (Pill + Botón) */
+.sidebar-item-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex-shrink: 0;
+  margin-bottom: 0.5rem;
+}
+
+.pill {
+  position: absolute;
+  left: 0;
+  width: 4px;
+  height: 8px;
+  background-color: var(--text-primary);
+  border-radius: 0 4px 4px 0;
+  opacity: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar-item-wrapper:hover .pill {
+  opacity: 1;
+  height: 20px;
+}
+
+/* Estado Activo: Cuando estás dentro del grupo o sección */
+.sidebar-item-wrapper.active .pill {
+  opacity: 1;
+  height: 40px;
+  background-color: var(--text-primary);
+}
+
+/* Botones base */
 .sidebar .button-general,
 .modal-button {
   background-color: var(--bg-base);
   color: var(--text-primary);
-  border-radius: 10px;
-  margin: 0.25rem;
+  border-radius: var(--radius-circle); 
   cursor: pointer;
   height: 3rem;
-  border: none;
   width: 3rem;
-  transition: 0.3s ease;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  font-weight: 600;
+  flex-shrink: 0;
 }
-.sidebar .button-general:hover,
-.modal-button:hover{
-  transform: translateY(-1px);
-  background-color: var(--primary-hover);
+
+/* Hover y Estado Activo de los botones */
+.sidebar-item-wrapper:hover .button-general,
+.sidebar-item-wrapper.active .button-general {
+  border-radius: 12px;
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+/* Botón de crear grupo (Modal) con hover verde */
+.sidebar-item-wrapper:hover .modal-button {
+  background-color: var(--success) !important;
+  border-radius: 12px;
+  color: #ffffff;
+}
+
+/* Separador */
+.sidebar .separator {
+  width: 2rem;
+  height: 2px;
+  background-color: var(--text-secondary);
+  border: none;
+  margin: 0.5rem 0;
+  opacity: 0.2;
+  flex-shrink: 0;
 }

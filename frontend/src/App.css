@@ -4,41 +4,46 @@
   --radius-pill: 40rem;
   --radius-search: 8px;
 
- /* Fondos */
-  --bg-base: #F7F8FC;      /* Fondo general */
-  --bg-soft: #EBECF2;      /* Fondo secundario */
-  --bg-cards: #ffffff;     /* Tarjetas y modales */
+  /* Fondos */
+  --bg-base: #ECEFF4;
+  --bg-soft: #D9DFE6;
+  --bg-cards: #FFFFFF;
 
   /* Texto */
-  --text-primary: #2A2E33;
-  --text-secondary: #3F435D;
+  --text-primary: #2E3A4C;
+  --text-secondary: #5C6B7A;
 
   /* Marca / Botones / Eventos */
-  --primary: #1976c9;
-  --primary-hover: #90c8ff;
+  --primary: #3B82C4;
+  --primary-hover: #60A5FA;
+  --secondary: #2563EB;
+  --secondary-hover: #3B82F6;
 
   /* Estados */
-  --success: #16a34a;
-  --error: #dc2626;
+  --success: #16A34A;
+  --error: #DC2626;
 
   /* Sombra */
   --shadow: rgba(0,0,0,0.2);
 }
 
-/* ----------------- PALETA MORADA ----------------- */
+/* ----------------- PALETA MORADA CORPORATIVA ----------------- */
 .theme-purple {
-  --bg-base: #140f2d;
-  --bg-soft: #1e1b4b;
-  --bg-cards: #140f2d;
+  --bg-base: #1F1B2E;
+  --bg-soft: #2C2A44;
+  --bg-cards: #343054;
 
-  --text-primary: #f5f3ff;
-  --text-secondary: #c4b5fd;
+  --text-primary: #F5F3FF;
+  --text-secondary: #C4B5FD;
 
-  --primary: #7c3aed;
-  --primary-hover: #6d28d9;
+  --primary: #7C3AED;
+  --primary-hover: #9333EA;
 
-  --success: #16a34a;
-  --error: #dc2626;
+  --secondary: #9333EA;
+  --secondary-hover: #A78BFA;
 
-  --shadow: rgba(0,0,0,0.2);
+  --success: #16A34A;
+  --error: #DC2626;
+
+  --shadow: rgba(0,0,0,0.25);
 }

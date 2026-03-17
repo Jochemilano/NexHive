@@ -26,12 +26,11 @@ const SecondSidebar = () => {
         <button
           onClick={() => setMinimized(!minimized)}
           aria-label={minimized ? "Expand sidebar" : "Minimize sidebar"}
-          className={minimized ? "rotated" : ""}
         >
           ❮
         </button>
       </div>
-      <div className={`sidebar-content ${minimized ? "minimized" : ""}`}>
+      <div className="sidebar-content">
         {content}
       </div>
     </aside>
