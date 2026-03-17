@@ -3,8 +3,10 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
+const path = require("path");
 
 // Controllers
+const upload = require("./middleware/uploadConfig");
 const authController = require("./controllers/auth");
 const groupsController = require("./controllers/groups");
 const projectsController = require("./controllers/projects");
@@ -22,6 +24,14 @@ const setupSockets = require("./sockets");
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Carpeta uploads como pública
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+//Mandar archivos
+app.post("/upload", upload.single("file"), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "Archivo no recibido" });
+  res.json({ url: `/uploads/${req.file.filename}` });
+});
 
 // Endpoints básicos
 app.get("/", (req, res) => res.send("Servidor corriendo"));

@@ -42,3 +42,5 @@ npm install jsonwebtoken
 npm install socket.io
 ---
 npm install dotenv
+---
+npm install multer

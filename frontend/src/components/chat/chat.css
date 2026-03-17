@@ -1,0 +1,90 @@
+/* chat.css */
+
+/* Contenedor principal del chat */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Ocupa todo el espacio disponible en el layout */
+  background: var(--bg-base);
+}
+
+/* Área de mensajes */
+.chat-messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Cada mensaje */
+.chat-message {
+  max-width: 60%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mensajes propios */
+.chat-message.mine {
+  align-self: flex-end;
+  background: var(--primary);
+  color: var(--text-primary);
+  border-bottom-right-radius: 2px;
+}
+
+/* Mensajes de otros */
+.chat-message.other {
+  align-self: flex-start;
+  background: var(--bg-cards);
+  color: var(--text-primary);
+  border-bottom-left-radius: 2px;
+}
+
+/* Nombre del remitente */
+.chat-message .sender {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-bottom: 3px;
+}
+
+/* Contenido del mensaje */
+.chat-message .content {
+  margin: 0;
+}
+
+/* Input y botón */
+.chat-input {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid var(--bg-soft);
+  background: var(--bg-cards);
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--bg-soft);
+  outline: none;
+  color: var(--text-primary);
+  background: var(--bg-base);
+}
+
+.chat-input button {
+  margin-left: 10px;
+  padding: 10px 16px;
+  border: none;
+  background: var(--primary);
+  color: var(--text-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.chat-input button:hover {
+  background: var(--primary-hover);
+}
