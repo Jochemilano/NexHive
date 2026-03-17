@@ -52,3 +52,142 @@
   background: var(--shadow);
   border-radius: 6px;
 }
+
+/* --------------------- LAYOUT PRINCIPAL --------------------- */
+/* Contenedor principal: sidebar y área principal con flexbox */
+.page-layout {
+  display: flex;
+  height: 100vh; /* Ocupa toda la altura visible */
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--bg-page, #f0f4f8);
+  box-sizing: border-box;
+}
+
+/* Sidebar izquierdo: lista de usuarios */
+.users-sidebar {
+  width: 280px; /* ancho fijo para sidebar */
+  background-color: var(--bg-base, #ffffff);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Título centrado y margen */
+.users-sidebar h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+/* Lista de usuarios con scroll si hay muchos */
+.users-list {
+  flex-grow: 1; /* ocupa todo el espacio vertical disponible */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-right: 0.5rem; /* espacio para scrollbar */
+}
+
+/* Mensaje cuando no hay usuarios */
+.no-users {
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 2rem;
+  font-style: italic;
+}
+
+/* Cada usuario en una fila */
+.user-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-soft);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.user-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Nombre de usuario */
+.user-name {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1; /* para que el texto tome espacio disponible */
+}
+
+/* Botón para llamar */
+.call-btn {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-circle);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  min-width: 38px;
+  min-height: 38px;
+  transition: all 0.2s;
+}
+
+.call-btn:hover {
+  transform: scale(1.1);
+  filter: brightness(1.1);
+}
+
+/* Área principal para la sala de voz */
+.call-main-area {
+  flex-grow: 1; /* ocupa todo el espacio disponible */
+  background-color: var(--bg-base);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+/* Card interna para la sala de voz */
+.voice-room-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Header de la sala de voz */
+.room-header {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+/* Contenido principal de la llamada */
+.call-content {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Scrollbar personalizado para lista de usuarios */
+.users-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.users-list::-webkit-scrollbar-thumb {
+  background: var(--shadow);
+  border-radius: 6px;
+}

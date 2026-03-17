@@ -2,6 +2,9 @@ const jwt = require("jsonwebtoken");
 const db = require("../db");
 
 module.exports = (io, connectedUsers) => {
+  // ← FUERA de io.on("connection") para que sea compartido entre todos los usuarios
+  const voiceRooms = new Map(); // voiceRoomId -> Set de userIds
+
   io.on("connection", (socket) => {
     const token = socket.handshake.auth?.token;
     if (!token) return socket.disconnect();
@@ -17,7 +20,7 @@ module.exports = (io, connectedUsers) => {
       return socket.disconnect();
     }
 
-    // Unirse a sala
+    // Unirse a sala de chat
     socket.on("join-room", (roomId) => {
       socket.join(roomId.toString());
       console.log("Usuario", socket.userId, "se unió a sala", roomId);
@@ -49,7 +52,7 @@ module.exports = (io, connectedUsers) => {
       }
     });
 
-    // Llamadas simple-peer
+    // Llamadas 1 a 1
     socket.on("call-user", async ({ toUserId, offer }) => {
       const targetSocketId = connectedUsers.get(toUserId);
       if (!targetSocketId) return;
@@ -72,7 +75,87 @@ module.exports = (io, connectedUsers) => {
       io.to(targetSocketId).emit("call-accepted", { fromUserId: socket.userId, answer });
     });
 
+    socket.on("call-declined", ({ toUserId }) => {
+      const targetSocketId = connectedUsers.get(toUserId);
+      if (targetSocketId) io.to(targetSocketId).emit("call-declined");
+    });
+
+    socket.on("call-ended", ({ toUserId }) => {
+      const targetSocketId = connectedUsers.get(toUserId);
+      if (targetSocketId) io.to(targetSocketId).emit("call-ended");
+    });
+
+    // ── Sala de voz grupal (mesh) ──────────────────────────────────────────
+
+    socket.on("join-voice-room", async ({ voiceRoomId }) => {
+      // Evitar doble entrada del mismo usuario
+      const roomKey = `voice-${voiceRoomId}`;
+      if (!voiceRooms.has(roomKey)) voiceRooms.set(roomKey, new Map()); // userId -> userName
+      const room = voiceRooms.get(roomKey);
+
+      if (room.has(socket.userId)) return; // ya está, ignorar duplicado
+
+      const [user] = await db.query("SELECT name FROM users WHERE id=?", [socket.userId]);
+      const userName = user?.[0]?.name || "Usuario";
+
+      // Decirle al recién llegado quiénes ya están
+      const existingUsers = Array.from(room.entries()).map(([uid, uname]) => ({
+        userId: uid,
+        userName: uname,
+      }));
+      socket.emit("voice-room-users", { users: existingUsers });
+
+      // Avisar a los que ya están que llegó alguien nuevo
+      room.forEach((_, existingUserId) => {
+        const existingSocketId = connectedUsers.get(existingUserId);
+        if (existingSocketId) {
+          io.to(existingSocketId).emit("voice-user-joined", {
+            userId: socket.userId,
+            userName,
+          });
+        }
+      });
+
+      // Agregar al recién llegado
+      room.set(socket.userId, userName);
+      socket.join(roomKey);
+      console.log(`Usuario ${socket.userId} (${userName}) entró a sala de voz ${voiceRoomId}`);
+    });
+
+    socket.on("voice-signal", ({ toUserId, signal }) => {
+      const targetSocketId = connectedUsers.get(toUserId);
+      if (targetSocketId) {
+        io.to(targetSocketId).emit("voice-signal", {
+          fromUserId: socket.userId,
+          signal,
+        });
+      }
+    });
+
+    socket.on("leave-voice-room", ({ voiceRoomId }) => {
+      const roomKey = `voice-${voiceRoomId}`;
+      const room = voiceRooms.get(roomKey);
+      if (room) {
+        room.delete(socket.userId);
+        if (room.size === 0) voiceRooms.delete(roomKey);
+      }
+      socket.leave(roomKey);
+      socket.to(roomKey).emit("voice-user-left", { userId: socket.userId });
+      console.log(`Usuario ${socket.userId} salió de sala de voz ${voiceRoomId}`);
+    });
+
+    // ──────────────────────────────────────────────────────────────────────
+
     socket.on("disconnect", () => {
+      // Limpiar de todas las salas de voz en las que estaba
+      voiceRooms.forEach((room, roomKey) => {
+        if (room.has(socket.userId)) {
+          room.delete(socket.userId);
+          socket.to(roomKey).emit("voice-user-left", { userId: socket.userId });
+          if (room.size === 0) voiceRooms.delete(roomKey);
+        }
+      });
+
       connectedUsers.delete(socket.userId);
       console.log("Usuario desconectado:", socket.userId);
     });

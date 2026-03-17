@@ -105,5 +105,63 @@ router.post("/messages", verifyToken, async (req, res) => {
   }
 });
 
+// Traer participantes de una sala (excluyendo al usuario que consulta)
+router.get("/rooms/:roomId/participants", verifyToken, async (req, res) => {
+  const { roomId } = req.params;
+  const userId = req.userId;
+ 
+  try {
+    // Verificar que el usuario pertenece a la sala
+    const [access] = await db.query(
+      "SELECT * FROM room_participants WHERE room_id = ? AND user_id = ?",
+      [roomId, userId]
+    );
+    if (access.length === 0) return res.status(403).json({ error: "No autorizado" });
+ 
+    // Traer los otros participantes (no el que consulta)
+    const [participants] = await db.query(
+      `SELECT u.id, u.name
+       FROM room_participants rp
+       JOIN users u ON u.id = rp.user_id
+       WHERE rp.room_id = ? AND rp.user_id != ?`,
+      [roomId, userId]
+    );
+ 
+    res.json(participants);
+ 
+  } catch (err) {
+    console.error("ERROR GET PARTICIPANTS:", err);
+    res.status(500).json({ message: "Error obteniendo participantes" });
+  }
+});
+
+// Buscar sala directa (tipo "direct") entre el usuario autenticado y otro usuario
+router.get("/rooms/direct/:otherUserId", verifyToken, async (req, res) => {
+  const userId      = req.userId;
+  const otherUserId = parseInt(req.params.otherUserId);
+ 
+  try {
+    const [rows] = await db.query(
+      `SELECT r.id
+       FROM rooms r
+       WHERE (r.name = ? OR r.name = ?)
+         AND (
+           SELECT COUNT(*) FROM room_participants WHERE room_id = r.id
+         ) = 2
+       LIMIT 1`,
+      [
+        `chat-${userId}-${otherUserId}`,
+        `chat-${otherUserId}-${userId}`
+      ]
+    );
+ 
+    if (rows.length === 0) return res.status(404).json({ message: "No existe sala directa" });
+ 
+    res.json({ roomId: rows[0].id });
+  } catch (err) {
+    console.error("ERROR GET DIRECT ROOM:", err);
+    res.status(500).json({ message: "Error buscando sala" });
+  }
+});
 
 module.exports = router;

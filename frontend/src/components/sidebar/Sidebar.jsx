@@ -101,11 +101,6 @@ const Sidebar = () => {
         <Button className="button-general" text="H" onClick={() => navigate("/home")} />
       </div>
 
-      <div className={`sidebar-item-wrapper ${location.pathname === "/call" ? "active" : ""}`}>
-        <div className="pill"></div>
-        <Button className="button-general" text="CLL" onClick={() => navigate("/call")} />
-      </div>
-
       <div className={`sidebar-item-wrapper ${location.pathname === "/saved" ? "active" : ""}`}>
         <div className="pill"></div>
         <Button className="button-general" text="GD" onClick={() => navigate("/saved")} />

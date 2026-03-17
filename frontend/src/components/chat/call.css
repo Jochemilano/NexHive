@@ -1,0 +1,164 @@
+/* ==========================
+            LLAMADAS
+   ==========================*/
+
+.call-container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-base);
+  border-radius: 16px;
+  padding: 1.5rem;
+  gap: 1.5rem;
+  color: var(--text-primary);
+  box-shadow: 0 12px 40px var(--shadow);
+  max-width: 950px;
+  margin: 1.5rem auto;
+  border: 1px solid var(--bg-soft);
+}
+
+/* Títulos y Estados */
+.call-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+/* Grid de Videos Inteligente */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.video-wrapper {
+  position: relative;
+  background-color: #121417; /* Fondo neutro para video off */
+  border-radius: var(--radius-search);
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+}
+
+.video-stream {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Estilo Discord: llena el espacio */
+}
+
+/* Etiquetas Flotantes */
+.video-label {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.1);
+  z-index: 5;
+}
+
+/* Barra de Herramientas */
+.call-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.25rem;
+  background-color: var(--bg-soft);
+  border-radius: var(--radius-pill); /* Estilo cápsula moderna */
+}
+
+/* Botones Base */
+.control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Botones de Hardware (Circulares) */
+.control-btn.on, 
+.control-btn.off {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-circle);
+  font-size: 1.2rem;
+}
+
+.control-btn.on {
+  background-color: var(--bg-cards);
+  color: var(--primary);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.control-btn.off {
+  background-color: var(--error);
+  color: white;
+}
+
+/* Botones de Acción (Píldora) */
+.control-btn.primary, 
+.control-btn.success, 
+.control-btn.danger, 
+.control-btn.warning {
+  padding: 0.8rem 1.8rem;
+  border-radius: var(--radius-pill);
+  color: white;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.control-btn.primary { background-color: var(--primary); }
+.control-btn.success { background-color: var(--success); }
+.control-btn.danger { background-color: var(--error); }
+.control-btn.warning { background-color: var(--secondary); }
+
+/* Efectos Globales de Botones */
+.control-btn:hover:not(:disabled) {
+  transform: scale(1.1);
+  filter: brightness(1.1);
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+.control-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
+/* Acciones Entrantes */
+.incoming-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Pantallas Pequeñas */
+@media (max-width: 600px) {
+  .video-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .call-container {
+    padding: 10px;
+    margin: 0;
+    border-radius: 0;
+  }
+}
