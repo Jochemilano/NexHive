@@ -3,19 +3,38 @@ import { useChat } from "hooks/useChat";
 import { useCall } from "context/CallContext";
 import CallVideo from "./Callvideo";
 import ImageModal from "./ImageModal";
-import { FaPaperclip, FaPaperPlane } from "react-icons/fa";
+import { FaPaperclip, FaPaperPlane, FaStar, FaPhone } from "react-icons/fa";
+import { getFileUrl, getFileName, toggleFavoriteMessage } from "utils/chat";
 import "./chat.css";
-
-const BACKEND_URL = "http://localhost:3001";
 
 // ── Renderizado de cada mensaje ───────────────────────────
 const MessageContent = ({ msg, onImageClick }) => {
-  const src = `${BACKEND_URL}${msg.content}`;
-  if (msg.type === "image")
-    return <img className="content-image" src={src} alt="imagen" onClick={() => onImageClick(src)} style={{ cursor: "pointer" }} />;
-  if (msg.type === "file")
-    return <a className="content-file" href={src} target="_blank" rel="noreferrer">{msg.content.split("/").pop()}</a>;
-  return <p className="content">{msg.content}</p>;
+  const [favorite, setFavorite] = useState(msg.favorite === 1);
+  const src = getFileUrl(msg.content);
+
+  const handleFavorite = async () => {
+    try {
+      const data = await toggleFavoriteMessage(msg.id);
+      setFavorite(data.favorite);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return (
+  <div className="message-content">
+    {{
+      image: <img className="content-image" src={src} alt="imagen" onClick={() => onImageClick(src)} />,
+      file: <a className="content-file" href={src} target="_blank" rel="noreferrer">{getFileName(msg.content)}</a>,
+      text: <p className="content">{msg.content}</p>,
+    }[msg.type]}
+
+    <FaStar
+      onClick={handleFavorite}
+      style={{ color: favorite ? "gold" : "gray", cursor: "pointer" }}
+    />
+  </div>
+);
 };
 
 // ── Componente principal ──────────────────────────────────
@@ -39,12 +58,19 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
       )}
 
       <div className="chat-section">
-        <div className="chat-header">
-          <span>{targetUserName || "Chat"}</span>
-          {targetUserId && !activeCall && (
-            <button onClick={handleCall} className="call-start-btn">📞 Llamar</button>
-          )}
-        </div>
+    <div className="chat-header">
+      <div className="chat-header-info">
+        <div className="chat-avatar">{targetUserName?.[0] || "C"}</div>
+        <span className="chat-username">{targetUserName || "Chat"}</span>
+      </div>
+
+      {targetUserId && !activeCall && (
+        <button onClick={handleCall} className="call-start-btn">
+          Llamar <FaPhone />
+        </button>
+      )}
+    </div>
+
 
         <div className="chat-messages">
           {messages.map((msg) => (

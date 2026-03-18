@@ -10,9 +10,9 @@ import { useCreateGroupModal } from "hooks/useCreateGroupModal";
 import "./Sidebar.css";
 
 const NAV_ITEMS = [
-  { path: "/home",     label: "H"  },
-  { path: "/saved",    label: "GD" },
-  { path: "/calendar", label: "C"  },
+  { path: "/home",       label: "H"  },
+  { path: "/Favorites",  label: "GD" },
+  { path: "/calendar",   label: "C"  },
 ];
 
 const Sidebar = () => {

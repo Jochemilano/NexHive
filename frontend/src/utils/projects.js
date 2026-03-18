@@ -1,4 +1,3 @@
-// projectsAPI.js
 import { apiFetch } from "./apiClient";
 
 export const createProject = (name, description, groupId) =>

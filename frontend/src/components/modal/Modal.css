@@ -1,44 +1,66 @@
-/*Open btn*/
+/* Botón de apertura del modal */
 .modal-button {
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
+  background: var(--primary);
+  color: var(--bg-base);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  font-size: 14px;
 }
 
-/*Overlay*/
+.modal-button:hover {
+  background: var(--primary-hover);
+}
+
+/* Overlay semi-transparente */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #00000050;
+  background-color: rgba(0, 0, 0, 0.5); /* más oscuro y elegante */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  backdrop-filter: blur(3px); /* desenfoque sutil detrás */
 }
 
-/*Floating content*/
+/* Contenido flotante del modal */
 .modal-content {
-  background-color: var(--bg-base);
+  background-color: var(--bg-cards);
   color: var(--text-primary);
   border-radius: 15px;
   width: 500px;
   max-width: 90%;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   overflow: hidden;
+  animation: modal-fade 0.25s ease;
 }
 
-/*HEADER: Title and close-btn */
-.modal-header {
-  justify-content: space-between;
-  padding: 1rem 1rem 0 1rem;
-  align-items: center;
-  display: flex;
+/* Animación de entrada */
+@keyframes modal-fade {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
-.modal-header h2{
+
+/* HEADER: título y botón cerrar */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--bg-soft);
+  backdrop-filter: blur(5px);
+}
+
+.modal-header h2 {
   margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
 }
 
 .modal-close-btn {
@@ -49,43 +71,51 @@
   color: var(--text-secondary);
   transition: 0.3s ease;
 }
-.modal-close-btn:hover{
+
+.modal-close-btn:hover {
   color: var(--text-primary);
+  transform: scale(1.1);
 }
 
-/*Body*/
+/* BODY */
 .modal-body {
-  margin: 1rem;
-
+  padding: 1rem;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
-/*FOOTER: container and buttons cancel-acept*/
+/* FOOTER: contenedor y botones */
 .modal-footer {
-  padding: 0 1rem 1rem 1rem;
-  justify-content: center;
   display: flex;
-  gap: 3rem;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1rem;
+  border-top: 1px solid var(--bg-soft);
 }
 
-.modal-cancel{
+.modal-cancel {
   border-radius: var(--radius-pill);
-  height: 2rem;
-  width: 5rem;
+  height: 2.5rem;
+  width: 6rem;
   border: 1px solid var(--text-secondary);
   color: var(--text-primary);
-  transition: 0.3s ease;
+  background: transparent;
+  transition: all 0.3s ease;
 }
-.modal-accept{
+
+.modal-accept {
   border-radius: var(--radius-pill);
-  height: 2rem;
-  width: 5rem;
+  height: 2.5rem;
+  width: 6rem;
   border: none;
   background-color: var(--primary);
   color: var(--bg-base);
-  transition: 0.3s ease;
+  transition: all 0.3s ease;
 }
+
 .modal-accept:hover,
-.modal-cancel:hover{
+.modal-cancel:hover {
   cursor: pointer;
-  transform: scale(1.1);
+  transform: scale(1.05);
+  filter: brightness(1.05);
 }

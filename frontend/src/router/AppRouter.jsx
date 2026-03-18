@@ -3,7 +3,7 @@ import ProtectedRoute from "utils/protected-route";
 import Layout from "components/layout/Layout";
 import Calendar from "pages/Calendar";
 import Login from "pages/Login";
-import Saved from "pages/Saved";
+import Favorites from "pages/Favorites";
 import GroupPage from "pages/GroupPage";
 import Home from "pages/Home";
 import ChatWrapper from "components/communication/ChatWrapper";
@@ -24,7 +24,7 @@ export default function AppRouter() {
         
         <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route path="/home"                                        element={<Home />} />
-          <Route path="/saved"                                       element={<Saved />} />
+          <Route path="/favorites"                                   element={<Favorites />} />
           <Route path="/calendar"                                    element={<Calendar />} />
           <Route path="groups/:groupId"                              element={<GroupPage />} />
           <Route path="/groups/:groupId/chat/:chatRoomId"            element={<ChatWrapper />} />

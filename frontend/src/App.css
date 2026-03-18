@@ -23,6 +23,10 @@
   --success: #16A34A;
   --error: #DC2626;
 
+  /* Mensajes */
+  --msg-bg: #778899;
+  --msg-text: #1B1F23;
+
   /* Sombra */
   --shadow: rgba(0,0,0,0.2);
 }
@@ -44,6 +48,9 @@
 
   --success: #16A34A;
   --error: #DC2626;
+
+  --msg-bg: #191970;
+  --msg-text: #cbced0;
 
   --shadow: rgba(0,0,0,0.25);
 }

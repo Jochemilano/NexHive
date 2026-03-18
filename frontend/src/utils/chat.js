@@ -1,0 +1,22 @@
+import { apiFetch } from "utils/apiClient";
+
+const BACKEND_URL = "http://localhost:3001";
+
+// ── URLs ─────────────────────────────
+export const getFileUrl = (path) => {
+  if (!path) return "";
+  return `${BACKEND_URL}${path}`;
+};
+
+// ── Mensajes ─────────────────────────
+export const toggleFavoriteMessage = async (messageId) => {
+  return apiFetch(`messages/${messageId}/favorite`, {
+    method: "POST",
+  });
+};
+
+// ── Helpers ──────────────────────────
+export const getFileName = (path) => path?.split("/").pop() || "";
+
+export const isMine = (msg, userId) =>
+  Number(msg.sender_id) === Number(userId);

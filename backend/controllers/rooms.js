@@ -66,13 +66,22 @@ router.get("/rooms/:roomId/messages", verifyToken, async (req, res) => {
 
     // Traer mensajes
     const [messages] = await db.query(
-      `SELECT messages.id, messages.room_id, messages.sender_id, messages.type, messages.content, messages.created_at,
-              users.name as sender_name
-       FROM messages
-       JOIN users ON users.id = messages.sender_id
-       WHERE room_id = ?
-       ORDER BY created_at ASC`,
-      [roomId]
+      `SELECT 
+          m.id, 
+          m.room_id, 
+          m.sender_id, 
+          m.type, 
+          m.content, 
+          m.created_at,
+          u.name AS sender_name,
+          CASE WHEN f.id IS NULL THEN 0 ELSE 1 END AS favorite
+      FROM messages m
+      JOIN users u ON u.id = m.sender_id
+      LEFT JOIN favorites f 
+              ON f.message_id = m.id AND f.user_id = ?
+      WHERE m.room_id = ?
+      ORDER BY m.created_at ASC`,
+      [userId, roomId]
     );
 
     res.json(messages);
