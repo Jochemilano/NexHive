@@ -1,3 +1,4 @@
+// components/groups/CreateActivityModal
 import React, { useState } from "react";
 import Modal from "components/modal/Modal";
 import { Input, Textarea, Select } from "components/input/Input";

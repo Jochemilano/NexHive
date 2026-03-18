@@ -1,5 +1,5 @@
 import React from 'react';
-import Modal from './Modal'; // reutiliza tu modal existente
+import Modal from './Modal';
 
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message }) => {
   return (

@@ -5,7 +5,7 @@ const ImageModal = ({ src, onClose }) => {
   if (!src) return null;
 
   const handleDownload = async (e) => {
-    e.stopPropagation(); // evita que el modal se cierre
+    e.stopPropagation();
     try {
       const response = await fetch(src, { mode: "cors" });
       const blob = await response.blob();

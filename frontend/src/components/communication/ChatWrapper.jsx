@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import Chat from "./chat";
 import { useEffect, useState } from "react";
 import { apiFetch } from "utils/apiClient";
-import { useCall } from "../../context/CallContext";
+import { useCall } from "context/CallContext";
 
 export default function ChatWrapper() {
   const { chatRoomId } = useParams();

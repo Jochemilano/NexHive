@@ -1,13 +1,12 @@
-// src/utils/calendar-create-event.js
 import { apiFetch } from './apiClient';
 
-// ⚡ Crear evento (ya lo tienes)
+// Crear evento
 export const createPersonalEvent = async (eventData) => {
   const payload = {
     title: eventData.title,
     description: eventData.description || null,
     start: eventData.start,
-    end: eventData.end
+    end: eventData.end,
   };
   return await apiFetch('events', {
     method: 'POST',
@@ -15,23 +14,23 @@ export const createPersonalEvent = async (eventData) => {
   });
 };
 
-// ⚡ Traer eventos (ya lo tienes)
+// Obtener eventos
 export const getPersonalEvents = async () => {
   return await apiFetch('events');
 };
 
-// ⚡ Eliminar evento (ya lo tienes)
+// Eliminar evento
 export const deletePersonalEvent = async (eventId) => {
   return await apiFetch(`events/${eventId}`, { method: 'DELETE' });
 };
 
-// ⚡ NUEVO: Actualizar evento
+// Actualizar evento
 export const updatePersonalEvent = async (eventId, eventData) => {
   const payload = {
     title: eventData.title,
     description: eventData.description || null,
     start: eventData.start,
-    end: eventData.end
+    end: eventData.end,
   };
   return await apiFetch(`events/${eventId}`, {
     method: 'PUT',

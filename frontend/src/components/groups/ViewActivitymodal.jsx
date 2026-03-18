@@ -1,5 +1,7 @@
+// components/groups/ViewActivityModal
 import React, { useEffect, useState } from "react";
 import Modal from "components/modal/Modal";
+import { apiFetch } from "utils/apiClient";
 
 const STATUS_LABELS = {
   pending: "Pendiente",
@@ -7,15 +9,6 @@ const STATUS_LABELS = {
   in_progress: "En progreso",
   completed: "Completada",
   cancelled: "Cancelada",
-};
-
-const fetchActivity = async (id) => {
-  const token = localStorage.getItem("token");
-  const res = await fetch(`/api/activities/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) throw new Error("Error al obtener actividad");
-  return res.json();
 };
 
 const formatDate = (d) => {
@@ -34,7 +27,7 @@ const ViewActivityModal = ({ isOpen, onClose, activityId }) => {
   useEffect(() => {
     if (!isOpen || !activityId) return;
     setLoading(true);
-    fetchActivity(activityId)
+    apiFetch(`activities/${activityId}`)
       .then(setActivity)
       .catch(console.error)
       .finally(() => setLoading(false));

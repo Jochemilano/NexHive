@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CalendarComponent from 'components/calendar/CalendarComponent';
 import CreateEventModal from 'components/calendar/CreateEventModal';
-import { createPersonalEvent, getPersonalEvents, deletePersonalEvent } from 'utils/calendar-create-event';
+import { createPersonalEvent, getPersonalEvents, deletePersonalEvent } from 'utils/calendar';
 import EditPersonalEventModal from 'components/calendar/EditPersonalEventModal';
 import EditActivityModal from 'components/groups/EditActivityModal';
 import '../styles.css';

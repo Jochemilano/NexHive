@@ -1,9 +1,9 @@
-// apiClient.js
-const BASE_URL = "http://localhost:3001/api"; // Cambia aquí si tu backend cambia de host
+// utils/apiClient.js
+const BASE_URL = "http://localhost:3001/api";
 
 export const apiFetch = async (endpoint, options = {}) => {
   try {
-    const token = localStorage.getItem("token"); // Token almacenado en localStorage
+    const token = localStorage.getItem("token");
 
     const res = await fetch(`${BASE_URL}/${endpoint}`, {
       ...options,
@@ -14,7 +14,6 @@ export const apiFetch = async (endpoint, options = {}) => {
       },
     });
 
-    // Manejo de errores de respuesta
     if (!res.ok) {
       let errorData = {};
       try {
@@ -23,7 +22,7 @@ export const apiFetch = async (endpoint, options = {}) => {
       throw new Error(errorData.message || "Error en la API");
     }
 
-    return await res.json(); // Devuelve los datos de la respuesta
+    return await res.json();
   } catch (err) {
     console.error("API Fetch Error:", err);
     throw err;
