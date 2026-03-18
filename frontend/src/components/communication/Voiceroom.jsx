@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { socket } from "socket";
+import { socket } from "utils/socket";
 import Peer from "simple-peer";
 import { FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash, FaDesktop, FaSignOutAlt } from "react-icons/fa";
 

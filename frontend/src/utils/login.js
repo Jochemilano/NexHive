@@ -1,4 +1,4 @@
-// services/login.js
+// utils/login.js
 import { apiFetch } from "utils/apiClient";
 
 export async function login(email, password) {

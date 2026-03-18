@@ -1,4 +1,4 @@
-// src/socket.js
+// utils/socket.js
 import { io } from "socket.io-client";
 
 // Conectamos socket con token de localStorage

@@ -1,5 +1,5 @@
 import React from "react";
-import { useCall } from "./CallContext";
+import { useCall } from "../../context/CallContext";
 import CallVideo from "./Callvideo";
 
 // Se renderiza en AppRouter para que flote en toda la app.

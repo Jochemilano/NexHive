@@ -9,16 +9,25 @@ router.get("/activities/:id", verifyToken, async (req, res) => {
 
   try {
     const [rows] = await db.query(
-      `SELECT a.id, a.name, a.description, a.status, a.start_date, a.deadline, a.project_id,
-              p.group_id
+      `SELECT
+         a.id,
+         a.name,
+         a.description,
+         a.status,
+         a.start_date,
+         a.deadline,
+         a.project_id,
+         a.created_by,
+         u.name AS created_by_name,
+         p.group_id
        FROM activities a
        JOIN projects p ON a.project_id = p.id
+       LEFT JOIN users u ON u.id = a.created_by
        WHERE a.id = ?`,
       [activityId]
     );
 
     const activity = rows[0];
-
     if (!activity)
       return res.status(404).json({ message: "Actividad no encontrada" });
 
@@ -37,9 +46,10 @@ router.get("/activities/:id", verifyToken, async (req, res) => {
       status: activity.status,
       start_date: activity.start_date,
       deadline: activity.deadline,
-      project_id: activity.project_id
+      project_id: activity.project_id,
+      created_by: activity.created_by,
+      created_by_name: activity.created_by_name,
     });
-
   } catch (err) {
     console.error("ERROR DB GET ACTIVITY:", err);
     res.status(500).json({ message: "Error al obtener actividad" });
@@ -64,7 +74,6 @@ router.put("/activities/:id", verifyToken, async (req, res) => {
     );
 
     const activity = rows[0];
-
     if (!activity)
       return res.status(404).json({ message: "Actividad no encontrada" });
 
@@ -97,9 +106,8 @@ router.put("/activities/:id", verifyToken, async (req, res) => {
       description: description || "",
       status: status || "pending",
       start_date: start_date || null,
-      deadline: deadline || null
+      deadline: deadline || null,
     });
-
   } catch (err) {
     console.error("ERROR DB UPDATE ACTIVITY:", err);
     res.status(500).json({ message: "Error actualizando actividad" });

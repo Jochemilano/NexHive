@@ -1,5 +1,5 @@
 import React from "react";
-import { useCall } from "./CallContext";
+import { useCall } from "../../context/CallContext";
 
 const IncomingCallModal = () => {
   const { incomingCall, acceptCall, declineCall } = useCall();

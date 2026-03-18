@@ -11,7 +11,6 @@ Components-> los componentes reutilizables
 pages->paginas enteras, donde puedes poner los componentes reutilizables
 router-> solo un archivo para manejar las rutas de las paginas, y se manda a app.js
 hooks->imegenes, audios y contenido
-services->logica externa APIs, Firebase, etc,
 utils->funciones utiles de procesamiento
 
 #css

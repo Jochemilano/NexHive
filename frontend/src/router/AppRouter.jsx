@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "utils/protected-route";
 import Layout from "components/layout/Layout";
 import Calendar from "pages/Calendar";
@@ -6,12 +6,11 @@ import Login from "pages/Login";
 import Saved from "pages/Saved";
 import GroupPage from "pages/GroupPage";
 import Home from "pages/Home";
-import ChatWrapper from "components/chat/ChatWrapper";
-import VoiceRoomWrapper from "components/chat/VoiceRoomWrapper";
-import GroupCall from "components/chat/GroupCall";
-import { CallProvider } from "components/chat/CallContext";
-import IncomingCallModal from "components/chat/IncomingCallModal";
-import FloatingCall from "components/chat/Floatingcall";
+import ChatWrapper from "components/communication/ChatWrapper";
+import VoiceRoomWrapper from "components/communication/VoiceRoomWrapper";
+import { CallProvider } from "context/CallContext";
+import IncomingCallModal from "components/communication/IncomingCallModal";
+import FloatingCall from "components/communication/Floatingcall";
 
 export default function AppRouter() {
   return (
@@ -21,6 +20,8 @@ export default function AppRouter() {
       <FloatingCall />
 
       <Routes>
+        <Route path="/" element={<Navigate to="/home" />} />
+        
         <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route path="/home"                                        element={<Home />} />
           <Route path="/saved"                                       element={<Saved />} />

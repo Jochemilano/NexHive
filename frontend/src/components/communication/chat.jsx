@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { socket, joinRoom, sendMessage } from "socket";
+import { socket, joinRoom, sendMessage } from "utils/socket";
 import { apiFetch } from "utils/apiClient";
 import "./chat.css";
 import { uploadFile } from "utils/rooms";
 import ImageModal from "./ImageModal";
-import { useCall } from "./CallContext";
+import { useCall } from "../../context/CallContext";
 import CallVideo from "./Callvideo";
+
+import { FaPaperclip, FaPaperPlane } from "react-icons/fa";
 
 const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
   const [messages, setMessages] = useState([]);
@@ -76,13 +78,14 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
 
         <div className="chat-messages">
           {messages.map((msg) => {
-            const isMine = msg.senderId === userId;
+            //const isMine = msg.senderId === userId;
+            const isMine = Number(msg.sender_id) === Number(userId);
             return (
               <div
-                key={msg.id || `${msg.senderId}-${msg.content}`}
+                key={msg.id || `${msg.sender_id}-${msg.content}`}
                 className={`chat-message ${isMine ? "mine" : "other"}`}
               >
-                <span className="sender">{msg.sender_name || msg.senderId}</span>
+                <span className="sender">{msg.sender_name || msg.sender_id}</span>
                 {msg.type === "text" && <p className="content">{msg.content}</p>}
                 {msg.type === "image" && (
                   <img

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useCall } from "./CallContext";
+import { useCall } from "../../context/CallContext";
 
 const CallVideo = ({ expanded = true }) => {
   const {
