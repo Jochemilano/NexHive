@@ -16,9 +16,14 @@ export const useChat = (roomId, userId) => {
     return () => socket.off("receive-message");
   }, [roomId]);
 
-  const send = (text) => {
-    if (!text.trim()) return;
-    sendMessage({ roomId, senderId: userId, type: "text", content: text });
+  const send = (content, replyToId = null) => {
+    sendMessage({
+      roomId,
+      senderId: userId,
+      type: "text",
+      content,
+      replyToId: replyToId || null,
+    });
   };
 
   const sendFile = async (file) => {
@@ -31,6 +36,22 @@ export const useChat = (roomId, userId) => {
       content: data.url,
     });
   };
+  const editMessage = async (messageId, content) => {
+    await apiFetch(`messages/${messageId}`, {
+      method: "PUT",
+      body: JSON.stringify({ content }),
+    });
+    // Actualiza localmente
+    setMessages((prev) =>
+      prev.map((m) => (m.id === messageId ? { ...m, content, edited: 1 } : m))
+    );
+  };
 
-  return { messages, send, sendFile };
+  const deleteMessage = async (messageId) => {
+    await apiFetch(`messages/${messageId}`, { method: "DELETE" });
+    setMessages((prev) => prev.filter((m) => m.id !== messageId));
+  };
+  
+
+  return { messages, send, sendFile, editMessage, deleteMessage };
 };

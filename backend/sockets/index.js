@@ -27,11 +27,11 @@ module.exports = (io, connectedUsers) => {
     });
 
     // Enviar mensaje
-    socket.on("send-message", async ({ roomId, type, content }) => {
+    socket.on("send-message", async ({ roomId, type, content, replyToId }) => {
       try {
-        const result = await db.query(
-          "INSERT INTO messages (room_id, sender_id, type, content) VALUES (?, ?, ?, ?)",
-          [roomId, socket.userId, type, content]
+        const [result] = await db.query(
+          "INSERT INTO messages (room_id, sender_id, type, content, reply_to_id) VALUES (?, ?, ?, ?, ?)",
+          [roomId, socket.userId, type, content, replyToId || null]
         );
 
         const [user] = await db.query("SELECT name FROM users WHERE id=?", [socket.userId]);
@@ -43,7 +43,10 @@ module.exports = (io, connectedUsers) => {
           sender_name: user?.[0]?.name || "Usuario",
           type,
           content,
-          created_at: new Date()
+          reply_to_id: replyToId || null,
+          created_at: new Date(),
+          edited: 0,
+          favorite: 0,
         };
 
         io.to(roomId.toString()).emit("receive-message", messageData);

@@ -12,7 +12,7 @@ const groupsController = require("./controllers/groups");
 const projectsController = require("./controllers/projects");
 const eventsController = require("./controllers/events");
 const roomsController = require("./controllers/rooms");
-const genericController = require("./controllers/generic");
+const profileController = require("./controllers/profile");
 const activitiesController = require("./controllers/activities");
 const favoritesController = require("./controllers/favorites");
 
@@ -45,7 +45,7 @@ app.use("/api", groupsController);
 app.use("/api", projectsController);
 app.use("/api", eventsController);
 app.use("/api", roomsController);
-app.use("/api", genericController);
+app.use("/api", profileController);
 app.use("/api", activitiesController);
 app.use("/api", favoritesController);
 

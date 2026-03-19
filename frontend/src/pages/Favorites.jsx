@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getUserFavorites, formatDate } from "utils/favorites";
 import { getFileUrl } from "utils/chat";
+import "../styles.css";
 
 const Favorites = () => {
   const [favorites, setFavorites] = useState([]);
@@ -28,23 +29,34 @@ const Favorites = () => {
   return (
     <div className="favorites-page">
       <h2>Mensajes Favoritos</h2>
+
       <div className="favorites-list">
         {favorites.map((msg) => (
           <div key={msg.id} className="favorite-message">
-            <strong>{msg.sender_name}:</strong>
+
+          {/* Header */}
+            <div className="message-header">
+            <strong className="sender">{msg.sender_name}</strong>
+              <small className="date">
+                {formatDate(msg.created_at)}
+              </small>
+            </div>
             
-            {msg.type === "image" ? (
-              <img
-                src={getFileUrl(msg.content)}
-                alt="Imagen enviada"
-                style={{ maxWidth: "200px", display: "block", marginTop: "8px" }}
-                onError={(e) => { e.target.style.display = 'none'; }}
+           {/* Contenido */}
+            <div className="message-content">
+              {msg.type === "image" ? (
+                <img
+                  src={getFileUrl(msg.content)}
+                  alt="Imagen enviada"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
               />
             ) : (
               <p>{msg.content}</p>
             )}
+          </div>
 
-            <small>{formatDate(msg.created_at)}</small>
           </div>
         ))}
       </div>

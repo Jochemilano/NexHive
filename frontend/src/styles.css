@@ -5,7 +5,7 @@
 
 /* Botones de la toolbar estilo píldora */
 .rbc-toolbar button {
-  border-radius: 9999px; /* píldora */
+  border-radius: 9999px;
   background-color: transparent;
   border: 2px solid var(--primary);
   color: var(--primary);
@@ -54,19 +54,18 @@
 }
 
 /* --------------------- LAYOUT PRINCIPAL --------------------- */
-/* Contenedor principal: sidebar y área principal con flexbox */
 .page-layout {
   display: flex;
-  height: 100vh; /* Ocupa toda la altura visible */
+  height: 100vh;
   gap: 1rem;
   padding: 1rem;
   background-color: var(--bg-page, #f0f4f8);
   box-sizing: border-box;
 }
 
-/* Sidebar izquierdo: lista de usuarios */
+/* --------------------- SIDEBAR USUARIOS --------------------- */
 .users-sidebar {
-  width: 280px; /* ancho fijo para sidebar */
+  width: 280px;
   background-color: var(--bg-base, #ffffff);
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.1);
@@ -75,24 +74,21 @@
   flex-direction: column;
 }
 
-/* Título centrado y margen */
 .users-sidebar h2 {
   text-align: center;
   margin-bottom: 1rem;
   color: var(--text-primary);
 }
 
-/* Lista de usuarios con scroll si hay muchos */
 .users-list {
-  flex-grow: 1; /* ocupa todo el espacio vertical disponible */
+  flex-grow: 1;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  padding-right: 0.5rem; /* espacio para scrollbar */
+  padding-right: 0.5rem;
 }
 
-/* Mensaje cuando no hay usuarios */
 .no-users {
   color: var(--text-secondary);
   text-align: center;
@@ -100,7 +96,6 @@
   font-style: italic;
 }
 
-/* Cada usuario en una fila */
 .user-item {
   display: flex;
   justify-content: space-between;
@@ -118,71 +113,15 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* Nombre de usuario */
 .user-name {
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex-grow: 1; /* para que el texto tome espacio disponible */
-}
-
-/* Botón para llamar */
-.call-btn {
-  background-color: var(--primary);
-  color: white;
-  border: none;
-  padding: 0.4rem 0.6rem;
-  border-radius: var(--radius-circle);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  min-width: 38px;
-  min-height: 38px;
-  transition: all 0.2s;
-}
-
-.call-btn:hover {
-  transform: scale(1.1);
-  filter: brightness(1.1);
-}
-
-/* Área principal para la sala de voz */
-.call-main-area {
-  flex-grow: 1; /* ocupa todo el espacio disponible */
-  background-color: var(--bg-base);
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-}
-
-/* Card interna para la sala de voz */
-.voice-room-card {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-/* Header de la sala de voz */
-.room-header {
-  text-align: center;
-  margin-bottom: 1rem;
-  color: var(--text-primary);
-}
-
-/* Contenido principal de la llamada */
-.call-content {
   flex-grow: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-/* Scrollbar personalizado para lista de usuarios */
+/* Scrollbar usuarios */
 .users-list::-webkit-scrollbar {
   width: 6px;
 }
@@ -190,4 +129,84 @@
 .users-list::-webkit-scrollbar-thumb {
   background: var(--shadow);
   border-radius: 6px;
+}
+
+/* --------------------- FAVORITES --------------------- */
+
+.favorites-page {
+  padding: 1rem;
+  max-width: 100%;
+  margin: 0;
+}
+
+.favorites-page h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+/* Lista de mensajes */
+.favorites-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+/* Cada mensaje estilo burbuja */
+.favorite-message {
+  background: var(--bg-base, #ffffff);
+  border-radius: 16px;
+  padding: 0.8rem 1rem;
+  max-width: 400px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.favorite-message:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+/* Header: nombre + fecha */
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.3rem;
+}
+
+.sender {
+  font-weight: 500;
+  color: var(--primary);
+  font-size: 0.85rem;
+}
+
+.date {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+/* Contenido de texto */
+.message-content p {
+  margin: 0;
+  color: var(--text-primary);
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+/* Contenido de imagen */
+.message-content img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin-top: 0.3rem;
+}
+
+/* Mensajes de estado (loading / vacío) */
+.favorites-page p {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-top: 2rem;
 }

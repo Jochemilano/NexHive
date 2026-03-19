@@ -71,14 +71,19 @@ router.get("/rooms/:roomId/messages", verifyToken, async (req, res) => {
           m.room_id, 
           m.sender_id, 
           m.type, 
-          m.content, 
-          m.created_at,
+          m.content,
+          m.edited,
+          m.reply_to_id,
+          m.created_at,                          -- 👈 hora
           u.name AS sender_name,
+          rm.content  AS reply_content,          -- 👈 texto del mensaje citado
+          ru.name     AS reply_sender_name,      -- 👈 autor del mensaje citado
           CASE WHEN f.id IS NULL THEN 0 ELSE 1 END AS favorite
       FROM messages m
       JOIN users u ON u.id = m.sender_id
-      LEFT JOIN favorites f 
-              ON f.message_id = m.id AND f.user_id = ?
+      LEFT JOIN messages rm ON rm.id = m.reply_to_id
+      LEFT JOIN users    ru ON ru.id = rm.sender_id
+      LEFT JOIN favorites f ON f.message_id = m.id AND f.user_id = ?
       WHERE m.room_id = ?
       ORDER BY m.created_at ASC`,
       [userId, roomId]
@@ -94,7 +99,7 @@ router.get("/rooms/:roomId/messages", verifyToken, async (req, res) => {
 
 // Enviar mensaje a sala
 router.post("/messages", verifyToken, async (req, res) => {
-  const { roomId, type, content } = req.body;
+  const { roomId, type, content, replyToId } = req.body; // 👈 agrega replyToId
   const senderId = req.userId;
 
   if (!roomId || !type || !content)
@@ -102,12 +107,11 @@ router.post("/messages", verifyToken, async (req, res) => {
 
   try {
     const result = await query(
-      "INSERT INTO messages (room_id, sender_id, type, content) VALUES (?, ?, ?, ?)",
-      [roomId, senderId, type, content]
+      "INSERT INTO messages (room_id, sender_id, type, content, reply_to_id) VALUES (?, ?, ?, ?, ?)",
+      [roomId, senderId, type, content, replyToId || null]
     );
 
     res.json({ success: true, messageId: result.insertId });
-
   } catch (err) {
     console.error("ERROR DB POST MESSAGE:", err);
     res.status(500).json({ message: "Error enviando mensaje" });
@@ -172,5 +176,59 @@ router.get("/rooms/direct/:otherUserId", verifyToken, async (req, res) => {
     res.status(500).json({ message: "Error buscando sala" });
   }
 });
+
+// Editar mensaje
+router.put("/messages/:messageId", verifyToken, async (req, res) => {
+  const { messageId } = req.params;
+  const { content } = req.body;
+  const userId = req.userId;
+
+  if (!content) return res.status(400).json({ message: "Contenido vacío" });
+
+  try {
+    const [msg] = await db.query(
+      "SELECT * FROM messages WHERE id = ? AND sender_id = ?",
+      [messageId, userId]
+    );
+    if (msg.length === 0) return res.status(403).json({ error: "No autorizado" });
+
+    await query(
+      "UPDATE messages SET content = ?, edited = 1 WHERE id = ?",
+      [content, messageId]
+    );
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("ERROR EDIT MESSAGE:", err);
+    res.status(500).json({ message: "Error editando mensaje" });
+  }
+});
+
+// Borrar mensaje
+router.delete("/messages/:messageId", verifyToken, async (req, res) => {
+  const { messageId } = req.params;
+  const userId = req.userId;
+
+  try {
+    const [msg] = await db.query(
+      "SELECT * FROM messages WHERE id = ? AND sender_id = ?",
+      [messageId, userId]
+    );
+    if (msg.length === 0) return res.status(403).json({ error: "No autorizado" });
+
+    await query("DELETE FROM messages WHERE id = ?", [messageId]);
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("ERROR DELETE MESSAGE:", err);
+    res.status(500).json({ message: "Error borrando mensaje" });
+  }
+});
+
+// Responder mensaje (reply)
+router.post("/messages", verifyToken, async (req, res) => {
+  // ya existe, solo añade reply_to_id al INSERT
+});
+
 
 module.exports = router;

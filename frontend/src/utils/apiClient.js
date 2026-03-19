@@ -1,4 +1,3 @@
-// utils/apiClient.js
 const BASE_URL = "http://localhost:3001/api";
 
 export const apiFetch = async (endpoint, options = {}) => {
@@ -9,16 +8,14 @@ export const apiFetch = async (endpoint, options = {}) => {
       ...options,
       headers: {
         "Content-Type": "application/json",
-        "Authorization": token ? `Bearer ${token}` : "",
+        Authorization: token ? `Bearer ${token}` : "",
         ...(options.headers || {}),
       },
     });
 
     if (!res.ok) {
       let errorData = {};
-      try {
-        errorData = await res.json();
-      } catch (e) {}
+      try { errorData = await res.json(); } catch (e) {}
       throw new Error(errorData.message || "Error en la API");
     }
 
