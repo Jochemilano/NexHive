@@ -7,6 +7,7 @@ import { FaPaperclip, FaPaperPlane, FaStar, FaPhone, FaReply, FaEdit, FaTrash, F
 import { getFileUrl, getFileName, toggleFavoriteMessage } from "utils/chat";
 import { apiFetch } from "utils/apiClient";
 import "./chat.css";
+import "./call.css";
 
 // ── Formatea hora ─────────────────────────────────────────
 const formatTime = (dateStr) => {
@@ -15,7 +16,7 @@ const formatTime = (dateStr) => {
   return d.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
 };
 
-// ── Renderizado de cada mensaje (ESTILO WHATSAPP) ──────────
+// ── Renderizado de cada mensaje ──────────
 const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete }) => {
   const [favorite, setFavorite] = useState(msg.favorite === 1);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -23,7 +24,6 @@ const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete }
 
   const src = getFileUrl(msg.content);
 
-  // Maneja clic fuera del menú para cerrarlo
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -47,7 +47,6 @@ const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete }
 
   return (
     <div className="message-wrapper">
-      {/* 1. LA BURBUJA (Contiene el texto y la flechita interna) */}
       <div className="message-content">
         {msg.reply_to_id && (
           <div className="reply-preview">
@@ -67,7 +66,6 @@ const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete }
           <span className="message-time">{formatTime(msg.created_at)}</span>
         </div>
 
-        {/* Botón Flechita (DENTRO de la burbuja) */}
         <button
           className="menu-toggle-btn"
           onClick={() => setMenuOpen(prev => !prev)}
@@ -76,7 +74,6 @@ const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete }
           ▼
         </button>
 
-        {/* Menú contextual */}
         {menuOpen && (
           <div className="context-menu" ref={menuRef}>
             <ul>
@@ -99,7 +96,6 @@ const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete }
         )}
       </div>
 
-      {/* 2. BOTÓN RESPONDER (POR FUERA, al lado de la burbuja) */}
       <button
         className="reply-btn"
         onClick={() => onReply(msg)}
@@ -114,10 +110,10 @@ const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete }
 
 // ── Componente principal ──────────────────────────────────
 const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
-  const [input,       setInput]       = useState("");
-  const [modalImage,  setModalImage]  = useState(null);
-  const [replyTo,     setReplyTo]     = useState(null); 
-  const [editingMsg,  setEditingMsg]  = useState(null); 
+  const [input, setInput] = useState("");
+  const [modalImage, setModalImage] = useState(null);
+  const [replyTo, setReplyTo] = useState(null); 
+  const [editingMsg, setEditingMsg] = useState(null); 
 
   const { messages, send, sendFile, deleteMessage, editMessage } = useChat(roomId, userId);
   const { activeCall, isMinimized, startCall } = useCall();
@@ -195,37 +191,62 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
           ))}
         </div>
 
-        {(replyTo || editingMsg) && (
-          <div className="action-banner">
-            {replyTo   && <><FaReply /> <span>Respondiendo a <b>{replyTo.sender_name}</b>: {replyTo.content}</span></>}
-            {editingMsg && <><FaEdit />  <span>Editando mensaje</span></>}
-            <button className="cancel-action" onClick={cancelAction}><FaTimes /></button>
-          </div>
-        )}
+        {/* CAMBIO */}
+        <div className="chat-footer-sticky">
+          
+          {(replyTo || editingMsg) && (
+            <div className="action-banner">
+              <div className="action-content">
+                {replyTo && (
+                  <>
+                    <FaReply className="action-icon" />
+                    <div className="action-info">
+                      <span className="reply-label">
+                        Respondiendo a <b>{replyTo.sender_name}</b>
+                      </span>
+                      <span className="reply-text-truncate">
+                        {replyTo.content}
+                      </span>
+                    </div>
+                  </>
+                )}
+                {editingMsg && (
+                  <>
+                    <FaEdit className="action-icon" />
+                    <span>Editando mensaje...</span>
+                  </>
+                )}
+              </div>
+              <button className="cancel-action" onClick={cancelAction}>
+                <FaTimes />
+              </button>
+            </div>
+          )}
 
-        <div className="chat-input">
-          <label htmlFor="file-upload" className="icon-btn">
-            <FaPaperclip />
-          </label>
-          <input id="file-upload" type="file" onChange={handleFile} style={{ display: "none" }} />
-          
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-            placeholder={editingMsg ? "Edita el mensaje..." : "Escribe un mensaje..."}
-            className="chat-textarea"
-            rows={1} 
-          />
-          
-          <button onClick={handleSend} className="send-btn" disabled={!input.trim()}>
-            <FaPaperPlane />
-          </button>
+          <div className="chat-input">
+            <label htmlFor="file-upload" className="icon-btn">
+              <FaPaperclip />
+            </label>
+            <input id="file-upload" type="file" onChange={handleFile} style={{ display: "none" }} />
+            
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+              placeholder={editingMsg ? "Edita el mensaje..." : "Escribe un mensaje..."}
+              className="chat-textarea"
+              rows={1}
+            />
+            
+            <button onClick={handleSend} className="send-btn" disabled={!input.trim()}>
+              <FaPaperPlane />
+            </button>
+          </div>
         </div>
       </div>
 

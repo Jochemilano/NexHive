@@ -3,9 +3,7 @@ const router = express.Router();
 const db = require("../db");
 const verifyToken = require("../middleware/verifyToken");
 
-// -------------------------------------
 // Marcar / desmarcar favorito
-// POST /api/messages/:messageId/favorite
 router.post("/messages/:messageId/favorite", verifyToken, async (req, res) => {
   const userId = req.userId; // viene del token
   const messageId = parseInt(req.params.messageId);
@@ -39,9 +37,8 @@ router.post("/messages/:messageId/favorite", verifyToken, async (req, res) => {
   }
 });
 
-// -------------------------------------
+
 // Obtener todos los favoritos de un usuario
-// GET /api/users/:userId/favorites
 router.get("/users/:userId/favorites", verifyToken, async (req, res) => {
   const userId = parseInt(req.params.userId);
 

@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require("../db");
 const verifyToken = require("../middleware/verifyToken");
 
-// GET /api/profile — datos del usuario autenticado
+// Traer datos del usuario autenticado
 router.get("/profile", verifyToken, async (req, res) => {
   try {
     const [results] = await db.query(
@@ -18,7 +18,7 @@ router.get("/profile", verifyToken, async (req, res) => {
   }
 });
 
-// GET /api/users — usuarios activos
+//Traer usuarios activos
 router.get("/users", async (req, res) => {
   try {
     const [results] = await db.query(`SELECT id, name FROM users WHERE status = 1`);
@@ -29,7 +29,7 @@ router.get("/users", async (req, res) => {
   }
 });
 
-// GET /api/allusers — todos los usuarios
+// Traer todos los usuarios
 router.get("/allusers", async (req, res) => {
   try {
     const [results] = await db.query(`SELECT id, name FROM users`);

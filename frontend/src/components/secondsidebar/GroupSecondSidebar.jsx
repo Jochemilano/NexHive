@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchGroupDetails } from "utils/groups";
+import { fetchGroupDetails, fetchGroupUsers } from "utils/groups";
 import Modal from "components/modal/Modal";
 import CreateProjectModal from "components/groups/CreateProjectModal";
 import { FaHashtag, FaVolumeUp } from "react-icons/fa";
@@ -11,6 +11,7 @@ const GroupSecondSidebar = ({ groupId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { selectedProjectId, setSelectedProjectId } = useGroup();
   const navigate = useNavigate();
+  const [availableUsers, setAvailableUsers] = useState([]);
 
   const loadDetails = async () => {
     if (!groupId) return;
@@ -28,6 +29,20 @@ const GroupSecondSidebar = ({ groupId }) => {
 
   useEffect(() => {
     loadDetails();
+  }, [groupId]);
+
+  useEffect(() => {
+    const loadUsers = async () => {
+      if (!groupId) return;
+      try {
+        const users = await fetchGroupUsers(groupId);
+        setAvailableUsers(users);
+      } catch (err) {
+        console.error("Error cargando usuarios del grupo:", err);
+        setAvailableUsers([]);
+      }
+    };
+    loadUsers();
   }, [groupId]);
   
   return (
@@ -78,6 +93,7 @@ const GroupSecondSidebar = ({ groupId }) => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         groupId={groupId}
+        availableUsers={availableUsers}
         onCreated={(newProject) => {
           setDetails((prev) => ({
             ...prev,

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useCall } from "context/CallContext";
 import { useCallMedia } from "hooks/useCallMedia";
-
+import { FaExpand, FaPhone, FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash, FaDesktop, FaTimes } from "react-icons/fa";
 const CallVideo = ({ expanded = true }) => {
   const {
     activeCall, callAccepted,
@@ -19,6 +19,7 @@ const CallVideo = ({ expanded = true }) => {
     startScreenShare, stopScreenShare,
   } = useCallMedia(localStreamRef, peerRef, localVidRef);
 
+  // Asignar streams
   useEffect(() => {
     if (localVidRef.current && localStreamRef.current)
       localVidRef.current.srcObject = localStreamRef.current;
@@ -31,30 +32,63 @@ const CallVideo = ({ expanded = true }) => {
 
   if (!activeCall) return null;
 
-  // Vista FLOTANTE
-  if (!expanded || isMinimized) return (
-    <div className="floating-call">
-      <span className="floating-name">📞 {activeCall.targetUserName}</span>
-      <div className="floating-controls">
-        <button onClick={expandCall}>⛶ Expandir</button>
-        <button onClick={hangUp}>Colgar</button>
+  // Vista FLOTANTE (Chiquita)
+if (!expanded || isMinimized) return (
+  <div className="floating-call">
+    <div className="floating-header">
+      <span className="floating-name">
+        <FaPhone /> {activeCall.targetUserName}
+      </span>
+      <div className="floating-buttons">
+        <button
+        onClick={() => setIsMinimized(false)}
+        className="floating-btn"
+        title="Maximizar"
+        >
+          <FaExpand />
+        </button>
+        <button onClick={hangUp} className="floating-btn danger">
+          <FaTimes />
+        </button>
       </div>
     </div>
-  );
+
+    <div className="floating-video">
+      <video
+        ref={localVidRef}
+        autoPlay
+        playsInline
+        muted
+        className="video-stream"
+      />
+      <div className="video-label">Tú {!isMicOn && "🔇"}</div>
+    </div>
+  </div>
+);
 
   // Vista EXPANDIDA
-  return (
-    <div className="call-expanded">
+   return (
+    <div className="call-extended-floating">
       <div className="call-header">
         <span>{callAccepted ? `En llamada con ${activeCall.targetUserName}` : "Llamando..."}</span>
-        <button onClick={() => setIsMinimized(true)}>⊟ Minimizar</button>
+        <button
+          className="minimize-btn"
+          onClick={() => setIsMinimized(true)}
+          title="Minimizar"
+        >
+          ⏷
+        </button>
       </div>
 
       <div className="video-grid">
         <div className="video-wrapper">
           <video ref={localVidRef} autoPlay playsInline muted className="video-stream" />
-          <div className="video-label">Tú {!isMicOn && "🔇"}</div>
+          <div className="video-label">
+            Tú {isMicOn ? <FaMicrophone /> : <FaMicrophoneSlash />}
+            {isCameraOn ? <FaVideo /> : <FaVideoSlash />}
+          </div>
         </div>
+
         {callAccepted && (
           <div className="video-wrapper">
             <video ref={remoteVidRef} autoPlay playsInline className="video-stream" />
@@ -63,15 +97,19 @@ const CallVideo = ({ expanded = true }) => {
         )}
       </div>
 
-      <div className="call-controls">
-        <button onClick={toggleMic}    className={`control-btn ${isMicOn    ? "on" : "off"}`}>{isMicOn    ? "🎤" : "🎙️"}</button>
-        <button onClick={toggleCamera} className={`control-btn ${isCameraOn ? "on" : "off"}`}>{isCameraOn ? "📹" : "📷"}</button>
+      <div className="call-controls-floating">
+        <button onClick={toggleMic} className={`control-btn ${isMicOn ? "on" : "off"}`}>
+          {isMicOn ? <FaMicrophone /> : <FaMicrophoneSlash />}
+        </button>
+        <button onClick={toggleCamera} className={`control-btn ${isCameraOn ? "on" : "off"}`}>
+          {isCameraOn ? <FaVideo /> : <FaVideoSlash />}
+        </button>
         {callAccepted && (
           <button onClick={sharingScreen ? stopScreenShare : startScreenShare} className="control-btn warning">
-            {sharingScreen ? "Dejar de compartir" : "Pantalla"}
+            {sharingScreen ? <FaTimes /> : <FaDesktop />}
           </button>
         )}
-        <button onClick={hangUp} className="control-btn danger">Colgar</button>
+        <button onClick={hangUp} className="control-btn danger"><FaTimes /></button>
       </div>
     </div>
   );

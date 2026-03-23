@@ -16,10 +16,12 @@ export const createGroup = (name, collaboratorIds = []) => {
   });
 };
 
-// Traer detalles de un grupo
-// El backend ya devuelve { channels, projects } con projects agrupados:
-// projects: [{ id, name, activities: [...] }]
+// Traer detalles de un grupo (canales + proyectos)
 export const fetchGroupDetails = (groupId) =>
   apiFetch(`groups/${groupId}/details`);
+
+// Traer todos los usuarios de un grupo
+export const fetchGroupUsers = (groupId) =>
+  apiFetch(`groups/${groupId}/users`);
 
 export const fetchAllUsers = () => apiFetch("allusers");

@@ -157,4 +157,36 @@ router.get("/groups/:groupId/details", verifyToken, async (req, res) => {
   }
 });
 
+//Traer usuarios del gpo
+router.get("/groups/:groupId/users", verifyToken, async (req, res) => {
+  const { groupId } = req.params;
+  const userId = req.userId;
+
+  try {
+    // Verificar que el usuario pertenece al grupo
+    const userGroup = await query(
+      "SELECT * FROM user_groups WHERE user_id=? AND group_id=?",
+      [userId, groupId]
+    );
+
+    if (!userGroup || userGroup.length === 0) {
+      return res.status(403).json({ message: "No pertenece al grupo" });
+    }
+
+    // Traer usuarios del grupo
+    const users = await query(
+      `SELECT u.id, u.name
+      FROM users u
+      JOIN user_groups ug ON u.id = ug.user_id
+      WHERE ug.group_id = ?`,
+      [groupId]
+    );
+
+    res.json(users || []);
+  } catch (err) {
+    console.error("ERROR DB GET GROUP USERS:", err);
+    res.status(500).json({ message: "Error al traer usuarios del grupo" });
+  }
+});
+
 module.exports = router;
