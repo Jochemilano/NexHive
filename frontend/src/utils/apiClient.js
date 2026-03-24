@@ -1,10 +1,10 @@
-const BASE_URL = "http://localhost:3001/api";
+import { CONFIG } from "./config";
 
 export const apiFetch = async (endpoint, options = {}) => {
   try {
     const token = localStorage.getItem("token");
 
-    const res = await fetch(`${BASE_URL}/${endpoint}`, {
+    const res = await fetch(`${CONFIG.API_URL}/${endpoint}`, {
       ...options,
       headers: {
         "Content-Type": "application/json",

@@ -8,7 +8,7 @@ const CallContext = createContext(null);
 
 export const CallProvider = ({ children }) => {
   const [incomingCall, setIncomingCall] = useState(null);
-  const [activeCall, setActiveCall]     = useState(null); // { targetUserId, targetUserName, chatRoomId }
+  const [activeCall, setActiveCall]     = useState(null);
   const [callAccepted, setCallAccepted] = useState(false);
   const [isMinimized, setIsMinimized]   = useState(false);
   const [remoteStream, setRemoteStream] = useState(null);
@@ -19,7 +19,11 @@ export const CallProvider = ({ children }) => {
 
   const initMedia = async () => {
     if (localStreamRef.current) return localStreamRef.current;
+    
     try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("Tu navegador no permite acceso a cámara/micrófono en conexiones no seguras (HTTP). Usa HTTPS o localhost.");
+      }
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       stream.originalVideoTrack = stream.getVideoTracks()[0];
       localStreamRef.current = stream;

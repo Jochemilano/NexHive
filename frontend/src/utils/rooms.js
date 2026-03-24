@@ -1,4 +1,4 @@
-//utils/rooms.js
+import { CONFIG } from "./config";
 import { apiFetch } from "./apiClient";
 
 // Traer todas las salas del usuario
@@ -22,7 +22,7 @@ export const uploadFile = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await fetch("http://localhost:3001/upload", {
+  const res = await fetch(CONFIG.UPLOAD_URL, {
     method: "POST",
     body: formData
   });

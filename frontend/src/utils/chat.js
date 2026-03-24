@@ -1,11 +1,10 @@
 import { apiFetch } from "utils/apiClient";
-
-const BACKEND_URL = "http://localhost:3001";
+import { CONFIG } from "./config";
 
 // ── URLs ─────────────────────────────
 export const getFileUrl = (path) => {
   if (!path) return "";
-  return `${BACKEND_URL}${path}`;
+  return `${CONFIG.BASE_URL}${path}`;
 };
 
 // ── Mensajes ─────────────────────────

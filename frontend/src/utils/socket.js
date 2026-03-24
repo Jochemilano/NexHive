@@ -1,8 +1,8 @@
-// utils/socket.js
+import { CONFIG } from "./config";
 import { io } from "socket.io-client";
 
 // Conectamos socket con token de localStorage
-const socket = io("http://localhost:3001", {
+const socket = io(CONFIG.BASE_URL, {
   auth: {
     token: localStorage.getItem("token") || ""  
   }
