@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaCog, FaUserAlt } from "react-icons/fa";
 import Modal from "components/modal/Modal";
 import Separator from "components/separator/Separator";
 import Button from "components/button/Button";
@@ -10,6 +10,8 @@ import CreateGroupModal from "components/groups/CreateGroupModal";
 import "./Sidebar.css";
 import UserPreferencesModal from 'components/profile/UserPreferencesModal';
 import { preferencesApi } from "utils/preferences";
+import ProfileModal from 'components/profile/ProfileModal';
+import { getProfile } from "utils/profile";
 
 const NAV_ITEMS = [
   { path: "/home", label: "H" },
@@ -23,6 +25,8 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
   const [userPreferences, setUserPreferences] = useState(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [perfil, setPerfil] = useState(null);
 
   const { groups, addGroup } = useGroups();
   const {
@@ -45,11 +49,25 @@ const Sidebar = () => {
     }
   };
 
+  const logout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
   const handleClose = () => {
     setIsOpen(false);
     reset();
   };
+  
+  useEffect(() => {
+    getProfile()
+      .then(setPerfil)
+      .catch((err) => console.error("Error al traer perfil:", err));
+  }, []);
 
+  const handlePicUpdated = (nuevaRuta) => {
+    setPerfil((prev) => ({ ...prev, profile_pic: nuevaRuta }));
+  };
   
   const handleSavePreferences = async (data) => {
     try {
@@ -115,12 +133,16 @@ const Sidebar = () => {
         </div>
       ))}
       <Separator />
-      
-      <Button
-        className="button-general"
-        text="P"
-        onClick={() => setIsPreferencesOpen(true)}
-      />
+      <div className="sidebar-item-wrapper">
+        <Button onClick={() => setIsPreferencesOpen(true)}>
+          <FaCog />
+        </Button>
+      </div>
+      <div className="sidebar-item-wrapper">
+        <Button onClick={() => setIsProfileOpen(true)}>
+          <FaUserAlt />
+        </Button>
+      </div>
 
       {/* Usamos el modal separado */}
       <CreateGroupModal
@@ -139,7 +161,14 @@ const Sidebar = () => {
         handleClose={() => setIsPreferencesOpen(false)}
         initialData={userPreferences}
         onSave={handleSavePreferences}
-      />  
+      />
+      <ProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        perfil={perfil}
+        onPicUpdated={handlePicUpdated}
+        onLogout={logout}
+      />
     </aside>
   );
 };

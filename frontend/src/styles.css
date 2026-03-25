@@ -43,7 +43,7 @@
   z-index: 1000;
 }
 
-/* --------------------- SCROLLBAR --------------------- */
+/* --------------------- CALENDAR --------------------- */
 .calendar-container::-webkit-scrollbar {
   width: 6px;
 }
@@ -53,20 +53,27 @@
   border-radius: 6px;
 }
 
+.rbc-off-range-bg{
+  background-color: var(--bg-soft);
+}
+.rbc-button-link{
+  color: var(--text-primary);
+}
+
 /* --------------------- LAYOUT PRINCIPAL --------------------- */
 .page-layout {
   display: flex;
   height: 100vh;
   gap: 1rem;
   padding: 1rem;
-  background-color: var(--bg-page, #f0f4f8);
+  background-color: var(--bg-base);
   box-sizing: border-box;
 }
 
 /* --------------------- SIDEBAR USUARIOS --------------------- */
 .users-sidebar {
   width: 280px;
-  background-color: var(--bg-base, #ffffff);
+  background-color: var(--bg-base);
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.1);
   padding: 1rem;
@@ -155,7 +162,7 @@
 
 /* Cada mensaje estilo burbuja */
 .favorite-message {
-  background: var(--bg-base, #ffffff);
+  background: var(--bg-base);
   border-radius: 16px;
   padding: 0.8rem 1rem;
   max-width: 400px;

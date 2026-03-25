@@ -1,0 +1,48 @@
+.collaborator-picker {
+  margin-top: 20px;
+}
+
+.collaborator-picker__select-wrapper {
+  margin-bottom: 6px;
+}
+
+.collaborator-picker__list-wrapper {
+  margin-top: 15px;
+}
+
+.collaborator-picker__list-title {
+  margin-bottom: 10px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.collaborator-picker__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.collaborator-picker__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: var(--bg-secondary);
+}
+
+.collaborator-picker__remove-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.collaborator-picker__remove-btn:hover {
+  color: var(--error);
+}

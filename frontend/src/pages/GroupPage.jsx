@@ -7,6 +7,8 @@ import ViewActivityModal from "components/groups/ViewActivityModal";
 import Modal from "components/modal/Modal";
 import { BsThreeDots } from "react-icons/bs";
 import { useGroup } from "context/GroupContext";
+import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import "./GroupPage.css";
 
 const STATUS_LABELS = {
   pending: "Pendiente",
@@ -158,6 +160,7 @@ const GroupPage = () => {
                                     setOpenMenuId(null);
                                   }}
                                 >
+                                  <FaEye style={{ marginRight: "12px" }} />
                                   Ver detalles
                                 </button>
                                 <button
@@ -167,6 +170,7 @@ const GroupPage = () => {
                                     setOpenMenuId(null);
                                   }}
                                 >
+                                  <FaEdit style={{ marginRight: "12px" }} />
                                   Editar
                                 </button>
                                 <button
@@ -176,6 +180,7 @@ const GroupPage = () => {
                                     setOpenMenuId(null);
                                   }}
                                 >
+                                   <FaTrash style={{ marginRight: "12px" }} />
                                   Eliminar
                                 </button>
                               </div>

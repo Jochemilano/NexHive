@@ -1,0 +1,43 @@
+.activity-detail__label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+}
+
+.activity-detail__value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-left: 0.5rem;
+}
+
+.activity-detail__field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.activity-detail__row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.activity-detail__row .activity-detail__field {
+  flex: 1 1 45%;
+  min-width: 120px;
+}
+
+.activity-detail__row .activity-detail__label {
+  min-width: auto;
+  font-size: 0.95rem;
+}
+
+.activity-detail__row .activity-detail__value {
+  margin-left: 0.25rem;
+}

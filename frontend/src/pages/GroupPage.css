@@ -1,0 +1,265 @@
+/* ==========================================================================
+   ESTRUCTURA Y CONTENEDOR
+   ========================================================================== */
+.group-page {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 2rem;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+}
+
+.main-content {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.group-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.group-page__title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.group-page__subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* BOTÓN NUEVA ACTIVIDAD */
+.group-page__header .modal-button {
+  width: auto !important;
+  height: auto !important;
+  border-radius: 6px !important;
+  background-color: var(--primary) !important;
+  color: #ffffff !important;
+  padding: 0.6rem 1.2rem !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  border: none !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.group-page__header .modal-button:hover {
+  background-color: var(--primary-hover) !important;
+  opacity: 0.95;
+  transform: none !important;
+}
+
+.group-page__header .modal-button:active {
+  transform: scale(0.98) !important;
+}
+
+/* ==========================================================================
+   FILTROS Y BUSQUEDA
+   ========================================================================== */
+.group-page__filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.group-page__search, 
+.group-page__filter {
+  padding: 0.6rem 1rem;
+  background-color: var(--bg-soft);
+  border: 1px solid var(--border, rgba(128, 128, 128, 0.2));
+  border-radius: var(--radius-search);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.group-page__search {
+  flex: 1;
+}
+
+.group-page__search:focus, 
+.group-page__filter:focus {
+  border-color: var(--primary);
+}
+
+/* ==========================================================================
+   TABLA DE ACTIVIDADES
+   ========================================================================== */
+.activity-table-wrapper {
+  background: var(--bg-soft);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow);
+  border: 1px solid var(--border, rgba(128, 128, 128, 0.1));
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding-bottom: 80px; 
+}
+
+.activity-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.activity-table th {
+  text-align: left;
+  background-color: rgba(0, 0, 0, 0.04);
+  padding: 1.25rem 1rem;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--border, rgba(128, 128, 128, 0.1));
+}
+
+.activity-table td {
+  padding: 1.1rem 1rem;
+  border-bottom: 1px solid var(--border, rgba(128, 128, 128, 0.05));
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.activity-table td:first-child {
+  white-space: normal;
+  min-width: 250px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.activity-table tr:hover td {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+tr:has(.activity-menu__dropdown) {
+  position: relative;
+  z-index: 100;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* ==========================================================================
+   ESTADOS (BADGES)
+   ========================================================================== */
+.activity-status {
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: inline-flex;
+  text-transform: uppercase;
+}
+
+.activity-status--pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.activity-status--in-progress, 
+.activity-status--in_progress { background: rgba(59, 130, 246, 0.15); color: var(--secondary); }
+.activity-status--completed { background: rgba(22, 163, 74, 0.15); color: var(--success); }
+.activity-status--cancelled { background: rgba(220, 38, 38, 0.15); color: var(--error); }
+
+/* ==========================================================================
+   MENU DE ACCIONES (DROPDOWN)
+   ========================================================================== */
+.activity-table__actions {
+  width: 60px;
+  text-align: center;
+  position: relative;
+  overflow: visible !important;
+}
+
+.activity-menu {
+  position: relative;
+  display: inline-flex;
+}
+
+.activity-menu__trigger {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--radius-circle);
+  display: flex;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+}
+
+.activity-menu__trigger:hover {
+  background-color: var(--bg-elevated, rgba(128, 128, 128, 0.2));
+  color: var(--primary);
+}
+
+.activity-menu__dropdown {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 9999;
+  background-color: var(--bg-soft);
+  border: 1px solid var(--border, rgba(128, 128, 128, 0.2));
+  border-radius: 10px;
+  min-width: 160px;
+  box-shadow: 0 10px 25px var(--shadow);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  animation: menuSlide 0.2s ease-out;
+}
+
+@keyframes menuSlide {
+  from { opacity: 0; transform: translateY(-50%) translateX(10px); }
+  to { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+
+.activity-menu__item {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  text-align: left;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.activity-menu__item:hover {
+  background-color: rgba(128, 128, 128, 0.1);
+}
+
+.activity-menu__item--danger {
+  color: var(--error);
+  border-top: 1px solid var(--border, rgba(128, 128, 128, 0.05));
+  margin-top: 4px;
+}
+
+.activity-menu__item--danger:hover {
+  background-color: var(--error) !important;
+  color: white !important;
+}
+
+/* ==========================================================================
+   SCROLLBAR
+   ========================================================================== */
+.activity-table-wrapper::-webkit-scrollbar { height: 6px; }
+.activity-table-wrapper::-webkit-scrollbar-thumb { 
+  background: var(--text-secondary); 
+  border-radius: 10px; 
+}

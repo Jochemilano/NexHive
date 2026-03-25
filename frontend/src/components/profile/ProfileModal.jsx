@@ -3,6 +3,7 @@ import Modal from "components/modal/Modal";
 import { FaCircle, FaTimesCircle, FaQuestionCircle, FaMinusCircle, FaCamera } from "react-icons/fa";
 import { updateProfilePic } from "utils/profile";
 import { CONFIG } from "utils/config";
+import "./ProfileModal.css";
 
 const ROL_LABEL = { 1: "Owner", 2: "Admin", 3: "IT", 4: "Técnico" };
 

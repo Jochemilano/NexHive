@@ -1,0 +1,87 @@
+.profile-pic-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 15px;       /* centrado y espacio debajo */
+  cursor: pointer;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+/* Foto de perfil */
+.profile-pic-wrapper img.profile-pic {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Overlay al pasar el cursor */
+.profile-pic-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.3);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.profile-pic-wrapper:hover .profile-pic-overlay {
+  opacity: 1;
+}
+
+/* Texto del usuario */
+.profile-modal p.name {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.profile-modal p.email {
+  font-size: 14px;
+  color: #bdc3c7;
+  margin: 3px 0;
+}
+
+.profile-modal p.role {
+  font-size: 14px;
+  margin: 3px 0 10px 0;
+}
+
+/* Estado */
+.status-container {
+  margin-bottom: 15px;
+}
+
+.status-container .icon {
+  margin-right: 5px;
+}
+
+.status.activo { color: #27ae60; }
+.status.desactivado { color: #e74c3c; }
+.status.no-molestar { color: #f39c12; }
+.status.desconocido { color: #95a5a6; }
+
+/* Botón Cerrar sesión */
+.log-out {
+  background-color: #c0392b;
+  color: #fff;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+.log-out:hover {
+  background-color: #e74c3c;
+}

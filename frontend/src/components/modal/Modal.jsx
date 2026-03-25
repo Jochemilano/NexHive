@@ -1,6 +1,5 @@
 import React from "react";
 import "./Modal.css";
-import Separator from "components/separator/Separator";
 
 export const ModalButton = ({ children, text, onClick, type = "button" }) => {
   return (
@@ -38,7 +37,6 @@ export const ModalHeader = ({ children, onClose }) => (
         </button>
       )}
     </div>
-    <Separator></Separator>
   </>
 );
 
@@ -48,7 +46,6 @@ export const ModalBody = ({ children }) => (
 
 export const ModalFooter = ({ children, onClose, onAccept }) => (
   <>
-    <Separator></Separator>
     <div className="modal-footer">
       <button
         className="modal-cancel"
