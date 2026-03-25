@@ -56,6 +56,11 @@ const Sidebar = () => {
       const saved = await preferencesApi.savePreferences(data);
       setUserPreferences(saved);
       setIsPreferencesOpen(false);
+
+      // Aplicar tema al instante
+      const themeClass = saved.theme === "light" ? "" : saved.theme;
+      document.body.className = themeClass;
+      
     } catch (err) {
       alert("Error guardando preferencias: " + err.message);
     }
