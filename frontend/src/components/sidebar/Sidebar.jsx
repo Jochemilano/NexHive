@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import Modal from "components/modal/Modal";
@@ -8,6 +8,8 @@ import { useGroups } from "hooks/useGroups";
 import { useCreateGroupModal } from "hooks/useCreateGroupModal";
 import CreateGroupModal from "components/groups/CreateGroupModal";
 import "./Sidebar.css";
+import UserPreferencesModal from 'components/profile/UserPreferencesModal';
+import { preferencesApi } from "utils/preferences";
 
 const NAV_ITEMS = [
   { path: "/home", label: "H" },
@@ -19,6 +21,8 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
+  const [userPreferences, setUserPreferences] = useState(null);
 
   const { groups, addGroup } = useGroups();
   const {
@@ -46,6 +50,26 @@ const Sidebar = () => {
     reset();
   };
 
+  
+  const handleSavePreferences = async (data) => {
+    try {
+      const saved = await preferencesApi.savePreferences(data);
+      setUserPreferences(saved);
+      setIsPreferencesOpen(false);
+    } catch (err) {
+      alert("Error guardando preferencias: " + err.message);
+    }
+  };
+
+  // Al cargar la app o el sidebar
+  useEffect(() => {
+    const fetchPrefs = async () => {
+      const prefs = await preferencesApi.getPreferences();
+      if (prefs) setUserPreferences(prefs);
+    };
+    fetchPrefs();
+  }, []);
+
   return (
     <aside className="sidebar">
       {NAV_ITEMS.map(({ path, label }) => (
@@ -68,6 +92,7 @@ const Sidebar = () => {
           <FaPlus />
         </Modal.Button>
       </div>
+      
 
       {groups.map(group => (
         <div
@@ -84,6 +109,13 @@ const Sidebar = () => {
           />
         </div>
       ))}
+      <Separator />
+      
+      <Button
+        className="button-general"
+        text="P"
+        onClick={() => setIsPreferencesOpen(true)}
+      />
 
       {/* Usamos el modal separado */}
       <CreateGroupModal
@@ -97,6 +129,12 @@ const Sidebar = () => {
         removeCollaborator={removeCollaborator}
         handleCreate={handleCreate}
       />
+      <UserPreferencesModal
+        isOpen={isPreferencesOpen}
+        handleClose={() => setIsPreferencesOpen(false)}
+        initialData={userPreferences}
+        onSave={handleSavePreferences}
+      />  
     </aside>
   );
 };

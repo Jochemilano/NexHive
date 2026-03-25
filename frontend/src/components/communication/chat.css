@@ -128,13 +128,13 @@
 }
 
 .chat-message.mine .message-content {
-  background: var(--msg-bg);
-  color: var(--msg-text);
+  background: var(--primary);
+  color: #fff;
   border-bottom-right-radius: 2px;
 }
 
 .chat-message.other .message-content {
-  background: var(--bg-cards);
+  background: var(--bg-base);
   color: var(--text-primary);
   border-bottom-left-radius: 2px;
 }
@@ -192,7 +192,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--bg-cards);
+  background: var(--bg-base);
   border: 1px solid var(--bg-soft);
   color: var(--text-secondary);
   display: flex;
@@ -209,7 +209,7 @@
   position: absolute;
   top: 30px;
   right: 5px;
-  background: var(--bg-cards);
+  background: var(--bg-base);
   border: 1px solid var(--bg-soft);
   border-radius: 8px;
   box-shadow: 0 4px 15px var(--shadow);
@@ -240,7 +240,7 @@
 }
 
 .action-banner {
-  background: var(--bg-cards);
+  background: var(--bg-base);
   border-left: 4px solid var(--primary);
   border-radius: 15px 15px 0 0;
   padding: 10px 15px;
@@ -280,7 +280,7 @@
   align-items: center;
   gap: 8px;
   padding: 6px 8px;
-  background: var(--bg-cards);
+  background: var(--bg-base);
   border-radius: 25px;
   box-shadow: 0 2px 8px var(--shadow);
   border: 0.8px solid var(--bg-soft);

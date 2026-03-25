@@ -5,27 +5,22 @@
   --radius-search: 8px;
 
   /* Fondos */
-  --bg-base: #ECEFF4;
-  --bg-soft: #D9DFE6;
-  --bg-cards: #FFFFFF;
+  --bg-base: #ffffff;
+  --bg-soft: #F4F7F9;
 
   /* Texto */
   --text-primary: #2E3A4C;
   --text-secondary: #5C6B7A;
 
   /* Marca / Botones / Eventos */
-  --primary: #3B82C4;
-  --primary-hover: #60A5FA;
-  --secondary: #2563EB;
+  --primary: #3B82F6;
+  --primary-hover: #2563EB;
+  --secondary: #60A5FA;
   --secondary-hover: #3B82F6;
 
   /* Estados */
   --success: #16A34A;
   --error: #DC2626;
-
-  /* Mensajes */
-  --msg-bg: 	#ccccff;
-  --msg-text: #1B1F23;
 
   /* Sombra */
   --shadow: rgba(0,0,0,0.2);
@@ -35,7 +30,7 @@
 .theme-purple {
   --bg-base: #1F1B2E;
   --bg-soft: #2C2A44;
-  --bg-cards: #343054;
+  --bg-base: #343054;
 
   --text-primary: #F5F3FF;
   --text-secondary: #C4B5FD;
@@ -46,11 +41,59 @@
   --secondary: #9333EA;
   --secondary-hover: #A78BFA;
 
-  --success: #16A34A;
-  --error: #DC2626;
-
-  --msg-bg: #191970;
-  --msg-text: #cbced0;
+  /* Estados */
+  --success: #22C55E;
+  --error: #EF4444;
 
   --shadow: rgba(0,0,0,0.25);
+}
+
+/* ----------------- PALETA OSCURA ----------------- */
+.theme-dark {
+  /* Fondos */
+  --bg-base: #0F172A;
+  --bg-soft: #1E293B;
+  --bg-elevated: #334155;
+
+  /* Texto */
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5F5;
+
+  /* Marca */
+  --primary: #3B82F6;
+  --primary-hover: #2563EB;
+
+  --secondary: #60A5FA;
+  --secondary-hover: #3B82F6;
+
+  /* Estados */
+  --success: #22C55E;
+  --error: #EF4444;
+
+  /* Bordes */
+  --border: #334155;
+
+  /* Sombra */
+  --shadow: rgba(0,0,0,0.5);
+}
+
+.theme-dark-pro {
+  --bg-base: #020617;
+  --bg-soft: #0F172A;
+  --bg-elevated: #1E293B;
+
+  --text-primary: #E2E8F0;
+  --text-secondary: #94A3B8;
+
+  --primary: #6366F1;
+  --primary-hover: #4F46E5;
+
+  --secondary: #818CF8;
+  --secondary-hover: #6366F1;
+
+  --success: #22C55E;
+  --error: #F87171;
+
+  --border: #1E293B;
+  --shadow: rgba(0,0,0,0.7);
 }

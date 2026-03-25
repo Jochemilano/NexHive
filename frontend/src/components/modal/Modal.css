@@ -31,7 +31,7 @@
 
 /* Contenido flotante del modal */
 .modal-content {
-  background-color: var(--bg-cards);
+  background-color: var(--bg-base);
   color: var(--text-primary);
   border-radius: 15px;
   width: 500px;

@@ -1,6 +1,6 @@
 /* --------------------- CONTENEDOR --------------------- */
 .calendar-container {
-    background-color: var(--bg-cards);
+    background-color: var(--bg-base);
     border-radius: var(--radius-search);
     padding: 1rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -15,7 +15,7 @@
 .rbc-time-content {
     overflow-y: scroll !important; 
     border-right: none !important;
-    background-color: var(--bg-cards);
+    background-color: var(--bg-base);
 }
 
 /* --------------------- EVENTOS (FINOS Y ELEGANTES) --------------------- */
