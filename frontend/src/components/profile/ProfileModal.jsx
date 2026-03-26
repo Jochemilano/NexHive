@@ -1,18 +1,11 @@
 import React, { useRef } from "react";
 import Modal from "components/modal/Modal";
-import { FaCircle, FaTimesCircle, FaQuestionCircle, FaMinusCircle, FaCamera } from "react-icons/fa";
+import { FaCamera } from "react-icons/fa";
 import { updateProfilePic } from "utils/profile";
 import { CONFIG } from "utils/config";
 import "./ProfileModal.css";
 
 const ROL_LABEL = { 1: "Owner", 2: "Admin", 3: "IT", 4: "Técnico" };
-
-const StatusIcon = ({ status }) => {
-  if (status === 1) return <><FaCircle className="icon activo" /> Activo</>;
-  if (status === 2) return <><FaTimesCircle className="icon desactivado" /> Desactivado</>;
-  if (status === 3) return <><FaMinusCircle className="icon no-molestar" /> No molestar</>;
-  return <><FaQuestionCircle className="icon desconocido" /> Desconocido</>;
-};
 
 const ProfileModal = ({ isOpen, onClose, perfil, onPicUpdated, onLogout }) => {
   const fileRef = useRef(null);
@@ -37,41 +30,55 @@ const ProfileModal = ({ isOpen, onClose, perfil, onPicUpdated, onLogout }) => {
     }
   };
 
-  return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <Modal.Body>
+  // Mapeo de clase de estado
+  const statusClass = { 1: "activo", 2: "desactivado", 3: "no-molestar" }[perfil?.status] || "desconocido";
+  const statusText = { 1: "Activo", 2: "Desactivado", 3: "No molestar" }[perfil?.status] || "Desconocido";
 
-        <div className="profile-pic-wrapper" onClick={() => fileRef.current.click()}>
-          {perfil?.profile_pic ? (
-            <img
-              src={`${CONFIG.BASE_URL}${perfil.profile_pic}`}
-              alt="Foto de perfil"
-              className="profile-pic"
-            />
+ return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <div className="profile-card">
+        <div className="profile-banner" />
+        
+        <div className="profile-content">
+          <div className="profile-pic-section">
+            <div className="profile-pic-wrapper" onClick={() => fileRef.current.click()}>
+              {perfil?.profile_pic ? (
+                <img
+                  src={`${CONFIG.BASE_URL}${perfil.profile_pic}`}
+                  alt="Perfil"
+                  className="profile-pic"
+                />
           ) : (
             <div className="profile-pic-placeholder">
               {perfil?.name?.[0]?.toUpperCase()}
             </div>
           )}
-          <span className="profile-pic-overlay"><FaCamera /></span>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            style={{ display: "none" }}
-            onChange={handleFileChange}
-          />
+          <div className="profile-pic-overlay"><FaCamera /></div>
+            </div>
+            <div className={`status-badge ${statusClass}`} title={statusText} />
+          </div>
+
+        <div className="user-details">
+            <h2 className="name">{perfil?.name}</h2>
+            <p className="email">{perfil?.email}</p>
+            <span className="role-badge">{ROL_LABEL[perfil?.rol] ?? "Invitado"}</span>
+          </div>
+
+          <div className="divider" />
+
+          <button className="log-out" onClick={onLogout}>
+            Cerrar sesión
+          </button>
         </div>
 
-        <p>{perfil?.name}</p>
-        <p>{perfil?.email}</p>
-        <p>{ROL_LABEL[perfil?.rol] ?? "Invitado"}</p>
-        <div className="status-container">
-          <StatusIcon status={perfil?.status} />
-        </div>
-        <button className="log-out" onClick={onLogout}>Cerrar sesión</button>
-
-      </Modal.Body>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          style={{ display: "none" }}
+          onChange={handleFileChange}
+        />
+      </div>
     </Modal>
   );
 };

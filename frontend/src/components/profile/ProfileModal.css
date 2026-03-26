@@ -1,87 +1,149 @@
-.profile-pic-wrapper {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  margin: 0 auto 15px;       /* centrado y espacio debajo */
-  cursor: pointer;
-  border-radius: 50%;
+.profile-card {
+  width: 100%;
+  min-width: 280px;
+  background-color: var(--bg-soft);
+  border-radius: 12px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Foto de perfil */
-.profile-pic-wrapper img.profile-pic {
-  width: 120px;
-  height: 120px;
+/* BANNER SUPERIOR */
+.profile-banner {
+  height: 60px;
+  background-color: var(--primary);
+  width: 100%;
+}
+
+/* CUERPO DEL CONTENIDO */
+.profile-content {
+  padding: 0 16px 16px;
+  position: relative;
+}
+
+/* SECCIÓN DE AVATAR (FOTO + BOLA) */
+.profile-pic-section {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin-top: -40px;
+  margin-bottom: 12px;
+}
+
+.profile-pic-wrapper {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--bg-soft);
+  padding: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+
+.profile-pic, 
+.profile-pic-placeholder {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+  font-weight: 800;
+  font-size: 1.5rem;
 }
 
-/* Overlay al pasar el cursor */
+/* ESTADO DE CONEXIÓN (BOLITA) */
+.status-badge {
+  position: absolute;
+  top: 60px;
+  left: 60px;
+  
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 4px solid var(--bg-soft);
+  z-index: 10;
+}
+
+.status-badge.activo { background-color: var(--success); }
+.status-badge.desactivado { background-color: var(--error); }
+.status-badge.no-molestar { background-color: #f39c12; }
+
+/* OVERLAY DE CÁMARA */
 .profile-pic-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 120px;
-  height: 120px;
+  inset: 4px;
+  background: rgba(0, 0, 0, 0.4);
   border-radius: 50%;
-  background: rgba(0,0,0,0.3);
-  color: #fff;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 28px;
+  justify-content: center;
+  color: #fff;
   opacity: 0;
   transition: opacity 0.2s ease;
+  backdrop-filter: blur(2px);
 }
 
 .profile-pic-wrapper:hover .profile-pic-overlay {
   opacity: 1;
 }
 
-/* Texto del usuario */
-.profile-modal p.name {
-  font-size: 18px;
-  font-weight: bold;
-  margin: 5px 0;
+/* DETALLES DE USUARIO */
+.user-details {
+  text-align: left;
 }
 
-.profile-modal p.email {
-  font-size: 14px;
-  color: #bdc3c7;
-  margin: 3px 0;
+.user-details .name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
 }
 
-.profile-modal p.role {
-  font-size: 14px;
-  margin: 3px 0 10px 0;
+.user-details .email {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 2px 0 10px;
 }
 
-/* Estado */
-.status-container {
-  margin-bottom: 15px;
+.role-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  background-color: var(--bg-base);
+  color: var(--primary);
+  border-radius: 4px;
 }
 
-.status-container .icon {
-  margin-right: 5px;
+/* SEPARADOR */
+.divider {
+  height: 1px;
+  background-color: var(--text-secondary);
+  opacity: 0.1;
+  margin: 16px 0;
 }
 
-.status.activo { color: #27ae60; }
-.status.desactivado { color: #e74c3c; }
-.status.no-molestar { color: #f39c12; }
-.status.desconocido { color: #95a5a6; }
-
-/* Botón Cerrar sesión */
+/* BOTÓN DE CIERRE DE SESIÓN */
 .log-out {
-  background-color: #c0392b;
-  color: #fff;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 6px;
+  width: 100%;
+  padding: 10px;
+  background-color: transparent;
+  color: var(--error);
+  border: 1px solid var(--error);
+  border-radius: var(--radius-search);
+  font-weight: 700;
+  font-size: 0.9rem;
   cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .log-out:hover {
-  background-color: #e74c3c;
+  background-color: var(--error);
+  color: #fff;
 }

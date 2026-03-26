@@ -1,0 +1,79 @@
+.preferences-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+  gap: 0.6rem;
+}
+
+.preferences-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  transition: color 0.2s ease;
+}
+
+.preferences-icon {
+  color: var(--primary);
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.preferences-field select {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.95rem;
+  border-radius: var(--radius-search);
+  border: 1px solid var(--secondary);
+  background-color: var(--bg-soft);
+  color: var(--text-primary);
+  outline: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.preferences-field select:hover {
+  border-color: var(--primary);
+  background-color: var(--bg-base);
+}
+
+.preferences-field select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--shadow);
+}
+
+.preferences-field--checkbox {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  margin-top: 0.5rem;
+  background-color: var(--bg-soft);
+  border-radius: var(--radius-search);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.preferences-field--checkbox:hover {
+  background-color: var(--bg-base);
+  border-color: var(--secondary);
+}
+
+.preferences-field--checkbox:hover .preferences-icon {
+  transform: scale(1.1);
+}
+
+.preferences-field--checkbox input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.preferences-field select option {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+}

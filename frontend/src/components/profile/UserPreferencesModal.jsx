@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import Modal from "components/modal/Modal";
+import { FaGlobe, FaPalette, FaBell } from "react-icons/fa";
+import "./UserPreferencesModal.css";
 
 const UserPreferencesModal = ({ isOpen, handleClose, initialData, onSave }) => {
   const [language, setLanguage] = useState("es");
@@ -29,34 +31,43 @@ const UserPreferencesModal = ({ isOpen, handleClose, initialData, onSave }) => {
       </Modal.Header>
 
       <Modal.Body>
-        <div className="modal-field">
-          <label>Idioma</label>
-          <select value={language} onChange={(e) => setLanguage(e.target.value)}>
-            <option value="es">Español</option>
-            <option value="en">English</option>
-          </select>
-        </div>
+        <div className="preferences-field">
+            <label className="preferences-label">
+              <FaGlobe className="preferences-icon" />
+              Idioma
+            </label>
+            <select value={language} onChange={(e) => setLanguage(e.target.value)}>
+              <option value="es">Español</option>
+              <option value="en">English</option>
+            </select>
+          </div>
 
-        <div className="modal-field">
-        <label>Tema</label>
-        <select value={theme} onChange={(e) => setTheme(e.target.value)}>
-            <option value="light">Claro (default)</option>
-            <option value="theme-dark">Oscuro</option>
-            <option value="theme-dark-pro">Oscuro Pro</option>
-            <option value="theme-purple">Morado</option>
-        </select>
-        </div>
+        <div className="preferences-field">
+            <label className="preferences-label">
+              <FaPalette className="preferences-icon" />
+              Tema
+            </label>
+            <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+              <option value="light">Claro (default)</option>
+              <option value="theme-dark">Oscuro</option>
+              <option value="theme-dark-pro">Oscuro Pro</option>
+              <option value="theme-purple">Morado</option>
+            </select>
+          </div>
 
-        <div className="modal-field">
-          <label>
-            <input
-              type="checkbox"
-              checked={notifications}
-              onChange={(e) => setNotifications(e.target.checked)}
-            />
-            Notificaciones
-          </label>
-        </div>
+        <div className="preferences-field preferences-field--checkbox">
+          <input
+            id="notifications"
+            type="checkbox"
+            checked={notifications}
+            onChange={(e) => setNotifications(e.target.checked)}
+           />
+
+            <label htmlFor="notifications" className="preferences-label">
+              <FaBell className="preferences-icon" />
+              Notificaciones
+             </label>
+          </div>
       </Modal.Body>
 
       <Modal.Footer onClose={handleClose}>

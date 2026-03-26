@@ -1,3 +1,7 @@
+a{
+  color: var(--primary);
+}
+
 /* --------------------- TOOLBAR --------------------- */
 .rbc-toolbar {
   margin-bottom: 1rem;
@@ -103,23 +107,6 @@
   font-style: italic;
 }
 
-.user-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--bg-soft);
-  padding: 0.5rem 0.75rem;
-  border-radius: var(--radius-pill);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  transition: all 0.2s;
-  cursor: pointer;
-}
-
-.user-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
 .user-name {
   font-weight: 500;
   white-space: nowrap;
@@ -164,9 +151,9 @@
 .favorite-message {
   background: var(--bg-base);
   border-radius: 16px;
-  padding: 0.8rem 1rem;
+  padding: 0.2rem 0.2rem;
   max-width: 400px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
@@ -182,7 +169,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.5rem;
 }
 
 .sender {

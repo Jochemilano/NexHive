@@ -5,18 +5,15 @@ import CallVideo from "./Callvideo";
 import ImageModal from "./ImageModal";
 import { FaPaperclip, FaPaperPlane, FaStar, FaPhone, FaReply, FaEdit, FaTrash, FaTimes } from "react-icons/fa";
 import { getFileUrl, getFileName, toggleFavoriteMessage } from "utils/chat";
-import { apiFetch } from "utils/apiClient";
 import "./chat.css";
 import "./call.css";
 
-// ── Formatea hora ─────────────────────────────────────────
 const formatTime = (dateStr) => {
   if (!dateStr) return "";
   const d = new Date(dateStr);
   return d.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
 };
 
-// ── Renderizado de cada mensaje ──────────
 const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete }) => {
   const [favorite, setFavorite] = useState(msg.favorite === 1);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -110,17 +107,54 @@ const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete }
 
 // ── Componente principal ──────────────────────────────────
 const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
+  // 1. Estados
   const [input, setInput] = useState("");
   const [modalImage, setModalImage] = useState(null);
-  const [replyTo, setReplyTo] = useState(null); 
-  const [editingMsg, setEditingMsg] = useState(null); 
+  const [replyTo, setReplyTo] = useState(null);
+  const [editingMsg, setEditingMsg] = useState(null);
+  const [isAtBottom, setIsAtBottom] = useState(true);
 
+  // 2. Refs
+  const chatPageRef = useRef(null);
+  const scrollContainerRef = useRef(null); // apuntará al main-content
+
+  // 3. Hooks de datos
   const { messages, send, sendFile, deleteMessage, editMessage } = useChat(roomId, userId);
   const { activeCall, isMinimized, startCall } = useCall();
 
+  // 4. Funciones de scroll
+  const scrollToBottom = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+  };
+
+  const handleScroll = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const threshold = 80;
+    const atBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+    setIsAtBottom(atBottom);
+  };
+
+  // 5. Effects
+  useEffect(() => {
+    const container = chatPageRef.current?.parentElement;
+    if (!container) return;
+    scrollContainerRef.current = container;
+    container.addEventListener("scroll", handleScroll);
+    scrollToBottom();
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (isAtBottom) scrollToBottom();
+  }, [messages]);
+
+  // 6. Handlers
   const handleSend = () => {
     if (!input.trim()) return;
-
     if (editingMsg) {
       editMessage(editingMsg.id, input);
       setEditingMsg(null);
@@ -152,7 +186,7 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
   };
 
   return (
-    <div className="chat-page">
+    <div className="chat-page" ref={chatPageRef}>
       {activeCall && !isMinimized && (
         <div className="chat-call-section">
           <CallVideo expanded />
@@ -191,9 +225,7 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
           ))}
         </div>
 
-        {/* CAMBIO */}
         <div className="chat-footer-sticky">
-          
           {(replyTo || editingMsg) && (
             <div className="action-banner">
               <div className="action-content">
@@ -228,7 +260,7 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
               <FaPaperclip />
             </label>
             <input id="file-upload" type="file" onChange={handleFile} style={{ display: "none" }} />
-            
+
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -242,13 +274,24 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
               className="chat-textarea"
               rows={1}
             />
-            
+
             <button onClick={handleSend} className="send-btn" disabled={!input.trim()}>
               <FaPaperPlane />
             </button>
           </div>
         </div>
       </div>
+
+      {!isAtBottom && (
+        <button
+          className="scroll-to-bottom-btn"
+          onClick={scrollToBottom}
+          aria-label="Ir al fondo"
+          type="button"
+        >
+          ↓
+        </button>
+      )}
 
       <ImageModal src={modalImage} onClose={() => setModalImage(null)} />
     </div>

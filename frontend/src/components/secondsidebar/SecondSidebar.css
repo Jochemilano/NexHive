@@ -72,6 +72,10 @@
   color: var(--text-secondary);
   font-weight: 500;
   font-size: 0.9rem;
+  justify-content: space-between;
+  padding: 0.5rem 0.5rem;
+  border-radius: var(--radius-pill);
+  transition: all 0.2s;
 }
 
 .user-item:hover {
