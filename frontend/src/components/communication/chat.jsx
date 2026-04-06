@@ -116,7 +116,8 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
 
   // 2. Refs
   const chatPageRef = useRef(null);
-  const scrollContainerRef = useRef(null); // apuntará al main-content
+  const scrollContainerRef = useRef(null);
+  const messagesRef = useRef(null);
 
   // 3. Hooks de datos
   const { messages, send, sendFile, deleteMessage, editMessage } = useChat(roomId, userId);
@@ -126,7 +127,7 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
   const scrollToBottom = () => {
     const container = scrollContainerRef.current;
     if (!container) return;
-    container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+    container.scrollTo({ top: container.scrollHeight });
   };
 
   const handleScroll = () => {
@@ -140,11 +141,13 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
 
   // 5. Effects
   useEffect(() => {
-    const container = chatPageRef.current?.parentElement;
+    const container = messagesRef.current;
     if (!container) return;
+
     scrollContainerRef.current = container;
     container.addEventListener("scroll", handleScroll);
     scrollToBottom();
+
     return () => container.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -206,7 +209,7 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
           )}
         </div>
 
-        <div className="chat-messages">
+        <div className="chat-messages" ref={messagesRef}>
           {messages.map((msg) => (
             <div
               key={msg.id || `${msg.sender_id}-${msg.content}`}
@@ -225,7 +228,7 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
           ))}
         </div>
 
-        <div className="chat-footer-sticky">
+        <div className="chat-footer">
           {(replyTo || editingMsg) && (
             <div className="action-banner">
               <div className="action-content">

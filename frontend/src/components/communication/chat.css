@@ -1,5 +1,6 @@
 /* ── ESTRUCTURA GENERAL ────────────────────────────────── */
 .chat-page {
+  height: 100%;
   display: flex;
   place-items: center;
   flex-direction: column;
@@ -9,6 +10,7 @@
 
 .chat-section {
   place-items: center;
+  width: 100%;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -19,7 +21,7 @@
 /* ── HEADER FIJO ───────────────────────────────────────── */
 .chat-header {
   width: 100%;
-  position: sticky;
+  position: absolute;
   top: 0;
   z-index: 10;
   border-radius: var(--radius-pill);
@@ -74,7 +76,7 @@
 /* ── MENSAJES (CONTENEDOR) ─────────────────────────────── */
 .chat-messages {
   flex: 1;
-  padding: 15px;
+  padding: 6rem 15px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -229,9 +231,9 @@
   color: var(--text-primary);
 }
 
-/* ── FOOTER STICKY (LO NUEVO CORREGIDO) ────────────────── */
-.chat-footer-sticky {
-  position: sticky;
+/* ── FOOTER  ────────────────── */
+.chat-footer {
+  position: absolute;
   bottom: 0;
   width: 100%;
   z-index: 3;
