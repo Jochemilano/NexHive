@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaPlus, FaCog, FaUserAlt } from "react-icons/fa";
 import Modal from "components/modal/Modal";
@@ -14,10 +14,46 @@ import ProfileModal from 'components/profile/ProfileModal';
 import { getProfile } from "utils/profile";
 
 const NAV_ITEMS = [
-  { path: "/home", label: "H" },
-  { path: "/Favorites", label: "GD" },
-  { path: "/calendar", label: "C" },
+  { path: "/home",      label: "H",  tooltip: "Home" },
+  { path: "/Favorites", label: "GD", tooltip: "Favoritos" },
+  { path: "/calendar",  label: "C",  tooltip: "Calendario" },
 ];
+
+const SidebarItem = ({ label, tooltip, isActive, onClick, children }) => {
+  const [show, setShow] = useState(false);
+  const [y, setY] = useState(0);
+  const ref = useRef(null);
+
+  const handleMouseEnter = () => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (rect) setY(rect.top + rect.height / 2);
+    setShow(true);
+  };
+
+  return (
+    <div
+      ref={ref}
+      className={`sidebar-item-wrapper ${isActive ? "active" : ""}`}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={() => setShow(false)}
+    >
+      <div className="pill" />
+      {children ? (
+        children
+      ) : (
+        <Button className="button-general" text={label} onClick={onClick} />
+      )}
+      {tooltip && (
+        <div
+          className={`sidebar-tooltip ${show ? "visible" : ""}`}
+          style={{ top: y, transform: `translateY(-50%) translateX(${show ? "0px" : "-4px"})` }}
+        >
+          {tooltip}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -58,7 +94,7 @@ const Sidebar = () => {
     setIsOpen(false);
     reset();
   };
-  
+
   useEffect(() => {
     getProfile()
       .then(setPerfil)
@@ -68,23 +104,19 @@ const Sidebar = () => {
   const handlePicUpdated = (nuevaRuta) => {
     setPerfil((prev) => ({ ...prev, profile_pic: nuevaRuta }));
   };
-  
+
   const handleSavePreferences = async (data) => {
     try {
       const saved = await preferencesApi.savePreferences(data);
       setUserPreferences(saved);
       setIsPreferencesOpen(false);
-
-      // Aplicar tema al instante
       const themeClass = saved.theme === "light" ? "" : saved.theme;
       document.body.className = themeClass;
-      
     } catch (err) {
       alert("Error guardando preferencias: " + err.message);
     }
   };
 
-  // Al cargar la app o el sidebar
   useEffect(() => {
     const fetchPrefs = async () => {
       const prefs = await preferencesApi.getPreferences();
@@ -95,56 +127,55 @@ const Sidebar = () => {
 
   return (
     <aside className="sidebar">
-      {NAV_ITEMS.map(({ path, label }) => (
-        <div
-          key={path}
-          className={`sidebar-item-wrapper ${
-            location.pathname === path ? "active" : ""
-          }`}
-        >
-          <div className="pill" />
-          <Button className="button-general" text={label} onClick={() => navigate(path)} />
-        </div>
-      ))}
 
-      <Separator />
-
-      <div className="sidebar-item-wrapper">
-        <div className="pill" />
-        <Modal.Button className="modal-button" onClick={() => setIsOpen(true)}>
-          <FaPlus />
-        </Modal.Button>
+      {/* ── HEADER FIJO: nav items ── */}
+      <div className="sidebar-header">
+        {NAV_ITEMS.map(({ path, label, tooltip }) => (
+          <SidebarItem
+            key={path}
+            label={label}
+            tooltip={tooltip}
+            isActive={location.pathname === path}
+            onClick={() => navigate(path)}
+          />
+        ))}
+        <Separator />
       </div>
-      
 
-      {groups.map(group => (
-        <div
-          key={group.id}
-          className={`sidebar-item-wrapper ${
-            location.pathname === `/groups/${group.id}` ? "active" : ""
-          }`}
-        >
-          <div className="pill" />
-          <Button
-            className="button-general"
-            text={group.name[0].toUpperCase()}
+      {/* ── GRUPOS CON SCROLL ── */}
+      <div className="sidebar-groups">
+        <SidebarItem tooltip="Nuevo grupo">
+          <Modal.Button className="modal-button" onClick={() => setIsOpen(true)}>
+            <FaPlus />
+          </Modal.Button>
+        </SidebarItem>
+
+        {groups.map(group => (
+          <SidebarItem
+            key={group.id}
+            label={group.name[0].toUpperCase()}
+            tooltip={group.name}
+            isActive={location.pathname === `/groups/${group.id}`}
             onClick={() => navigate(`/groups/${group.id}`)}
           />
-        </div>
-      ))}
-      <Separator />
-      <div className="sidebar-item-wrapper">
-        <Button onClick={() => setIsPreferencesOpen(true)}>
-          <FaCog />
-        </Button>
-      </div>
-      <div className="sidebar-item-wrapper">
-        <Button onClick={() => setIsProfileOpen(true)}>
-          <FaUserAlt />
-        </Button>
+        ))}
       </div>
 
-      {/* Usamos el modal separado */}
+      {/* ── FOOTER FIJO: config y perfil ── */}
+      <div className="sidebar-footer">
+        <Separator />
+        <SidebarItem tooltip="Preferencias">
+          <Button onClick={() => setIsPreferencesOpen(true)}>
+            <FaCog />
+          </Button>
+        </SidebarItem>
+        <SidebarItem tooltip="Perfil">
+          <Button onClick={() => setIsProfileOpen(true)}>
+            <FaUserAlt />
+          </Button>
+        </SidebarItem>
+      </div>
+
       <CreateGroupModal
         isOpen={isOpen}
         handleClose={handleClose}

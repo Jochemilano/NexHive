@@ -29,13 +29,38 @@ module.exports = (io, connectedUsers) => {
     // Enviar mensaje
     socket.on("send-message", async ({ roomId, type, content, replyToId }) => {
       try {
+        // 1️⃣ Insertar el mensaje en la base de datos
         const [result] = await db.query(
           "INSERT INTO messages (room_id, sender_id, type, content, reply_to_id) VALUES (?, ?, ?, ?, ?)",
           [roomId, socket.userId, type, content, replyToId || null]
         );
 
+        // 2️⃣ Obtener el nombre del remitente
         const [user] = await db.query("SELECT name FROM users WHERE id=?", [socket.userId]);
 
+        // 3️⃣ Preparar datos de mensaje original si es una respuesta
+        let replyContent = null;
+        let replySenderName = null;
+
+        if (replyToId) {
+          const [replyMsg] = await db.query(
+            "SELECT content, sender_id FROM messages WHERE id = ?",
+            [replyToId]
+          );
+
+          if (replyMsg?.[0]) {
+            replyContent = replyMsg[0].content;
+
+            const [replyUser] = await db.query(
+              "SELECT name FROM users WHERE id = ?",
+              [replyMsg[0].sender_id]
+            );
+
+            replySenderName = replyUser?.[0]?.name || "Usuario";
+          }
+        }
+
+        // 4️⃣ Construir el mensaje completo para enviar por socket
         const messageData = {
           id: result.insertId,
           room_id: roomId,
@@ -44,12 +69,16 @@ module.exports = (io, connectedUsers) => {
           type,
           content,
           reply_to_id: replyToId || null,
+          reply_content: replyContent,
+          reply_sender_name: replySenderName,
           created_at: new Date(),
           edited: 0,
           favorite: 0,
         };
 
+        // 5️⃣ Emitir mensaje a todos los usuarios en la sala
         io.to(roomId.toString()).emit("receive-message", messageData);
+
       } catch (err) {
         console.error("ERROR SOCKET MESSAGE:", err);
       }

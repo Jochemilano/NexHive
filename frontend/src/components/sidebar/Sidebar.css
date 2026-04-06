@@ -2,25 +2,53 @@
   background-color: var(--bg-soft);
   height: 100vh;
   position: relative;
-  width: 4.5rem; 
+  width: 4.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
-  /* scroll cuando hay muchos grupos */
+  overflow: hidden;
+  z-index: 20;
+}
+
+/* ── Header fijo ── */
+.sidebar-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex-shrink: 0;
+  padding-top: 0.75rem;
+}
+
+/* ── Zona de grupos scrolleable ── */
+.sidebar-groups {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
-  z-index: 20;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+  padding: 0;
 }
 
-.sidebar::-webkit-scrollbar {
+.sidebar-groups::-webkit-scrollbar {
   display: none;
 }
 
-/* Contenedor de cada item (Pill + Botón) */
+/* ── Footer fijo ── */
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex-shrink: 0;
+  padding-bottom: 0.75rem;
+}
+
+/* ── Item wrapper ── */
 .sidebar-item-wrapper {
   position: relative;
   display: flex;
@@ -31,6 +59,7 @@
   margin-bottom: 0.5rem;
 }
 
+/* ── Pill indicator ── */
 .pill {
   position: absolute;
   left: 0;
@@ -47,19 +76,18 @@
   height: 20px;
 }
 
-/* Estado Activo: Cuando estás dentro del grupo o sección */
 .sidebar-item-wrapper.active .pill {
   opacity: 1;
   height: 40px;
   background-color: var(--text-primary);
 }
 
-/* Botones base */
+/* ── Botones base ── */
 .sidebar .button-general,
 .modal-button {
   background-color: var(--bg-base);
   color: var(--text-primary);
-  border-radius: var(--radius-circle); 
+  border-radius: var(--radius-circle);
   cursor: pointer;
   height: 3rem;
   width: 3rem;
@@ -73,7 +101,6 @@
   flex-shrink: 0;
 }
 
-/* Hover y Estado Activo de los botones */
 .sidebar-item-wrapper:hover .button-general,
 .sidebar-item-wrapper.active .button-general {
   border-radius: 12px;
@@ -81,14 +108,13 @@
   color: #ffffff;
 }
 
-/* Botón de crear grupo (Modal) con hover verde */
 .sidebar-item-wrapper:hover .modal-button {
   background-color: var(--success) !important;
   border-radius: 12px;
   color: #ffffff;
 }
 
-/* Separador */
+/* ── Separador ── */
 .sidebar .separator {
   width: 2rem;
   height: 2px;
@@ -97,4 +123,27 @@
   margin: 0.5rem 0;
   opacity: 0.2;
   flex-shrink: 0;
+}
+
+/* ── Tooltip ── */
+.sidebar-tooltip {
+  position: fixed;
+  left: 5rem;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  border: 1px solid rgba(128, 128, 128, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+}
+
+.sidebar-tooltip.visible {
+  opacity: 1;
 }

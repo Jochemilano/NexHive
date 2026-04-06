@@ -6,6 +6,7 @@
   flex-direction: column;
   background: var(--bg-base);
   position: relative;
+  padding: 0 1.5rem;
 }
 
 .chat-section {
@@ -75,6 +76,7 @@
 
 /* ── MENSAJES (CONTENEDOR) ─────────────────────────────── */
 .chat-messages {
+  width: 100%;
   flex: 1;
   padding: 6rem 15px;
   overflow-y: auto;
@@ -120,9 +122,9 @@
   padding: 10px 35px 10px 14px !important;
   border-radius: 12px;
   font-size: 14px;
-  box-shadow: 0 1px 2px var(--shadow);
   display: flex;
   flex-direction: column;
+  transition: 0.3s ease;
 }
 
 .chat-message.mine .message-content {
@@ -155,7 +157,7 @@
   margin: 0;
   white-space: pre-wrap;
   word-wrap: break-word;
-  word-break: break-word; /* Rompe palabras largas */
+  word-break: break-word;
   overflow-wrap: break-word;
   font-size: 14px;
   line-height: 1.4;
@@ -174,6 +176,26 @@
 
 .chat-message.mine .reply-preview {
   border-left: 3px solid var(--secondary-hover);
+}
+
+.reply-author {
+  color: var(--text-primary);
+  margin-bottom: 2px;
+  font-size: 12px;
+}
+
+.reply-text {
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+.highlighted .message-content {
+  scale: 1.01;
+  box-shadow: 0 0 20px 3px var(--secondary-hover);
 }
 
 /* ── MENÚ CONTEXTUAL Y BOTONES ─────────────────────────── */
@@ -277,11 +299,9 @@
 
 /* ── INPUT CAPSULE (LIMPIA) ────────────────────────────── */
 .chat-input {
-  margin: 0 !important;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
+  padding: 8px;
   background: var(--bg-soft);
   border-radius: 25px;
   box-shadow: 0 2px 8px var(--shadow);
@@ -301,33 +321,39 @@
 
 .chat-input textarea {
   flex: 1;
-  border: none !important;
-  outline: none !important;
-  background: transparent !important;
-  padding: 8px 10px;
+  scrollbar-width: none;
+  border: none;
+  outline: none ;
+  background: transparent;
   font-size: 14px;
   resize: none;
-  min-height: 36px;
-  max-height: 120px;
+  min-height: 1.4rem;
+  max-height: calc(1.4em * 4 + 16px);
   color: var(--text-primary);
+  overflow-y: auto;
   line-height: 1.4;
 }
 
-.icon-btn {
-  width: 34px;
-  height: 34px;
+.upload-btn {
+  margin-right: 3px;
+  width: 2.3rem;
+  height: 2.3rem;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-secondary);
   cursor: pointer;
   flex-shrink: 0;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
+  transition: 0.3s ease;
+}
+.upload-btn:hover{
+  background-color: var(--bg-base);
 }
 
 .chat-input button.send-btn {
-  width: 36px;
-  height: 36px;
+  width: 2.3rem;
+  height: 2.3rem;
   background: var(--primary);
   color: white;
   border-radius: 50%;
@@ -337,6 +363,12 @@
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  transition: 0.3s ease;
+}
+
+.chat-input button.send-btn:hover,
+.upload-btn:hover {
+  scale: 1.1;
 }
 
 .chat-input button.send-btn:disabled {

@@ -50,8 +50,10 @@ const UserPreferencesModal = ({ isOpen, handleClose, initialData, onSave }) => {
             <select value={theme} onChange={(e) => setTheme(e.target.value)}>
               <option value="light">Claro (default)</option>
               <option value="theme-dark">Oscuro</option>
-              <option value="theme-dark-pro">Oscuro Pro</option>
+              <option value="theme-blue">Azul</option>
               <option value="theme-purple">Morado</option>
+              <option value="theme-gray">Gris</option>
+              <option value="theme-pink">Rosa</option>
             </select>
           </div>
 

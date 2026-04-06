@@ -5,6 +5,7 @@ import {
   FaVideo, FaVideoSlash,
   FaDesktop, FaSignOutAlt,
 } from "react-icons/fa";
+import './Voiceroom.css'
 
 // ── Tile de participante remoto ───────────────────────────
 const RemoteTile = ({ participant }) => {
@@ -16,7 +17,7 @@ const RemoteTile = ({ participant }) => {
   }, [participant.stream]);
 
   return (
-    <div className="voice-tile">
+    <div className={`voice-tile ${participant.isSpeaking ? 'speaking' : ''}`}>
       <video ref={videoRef} autoPlay playsInline className="voice-video" />
       <div className="voice-tile-label">{participant.userName}</div>
     </div>
@@ -38,9 +39,9 @@ const VoiceRoom = ({ voiceRoomId }) => {
     startScreenShare,
     stopScreenShare,
     leaveRoom,
+    amISpeaking // <-- opcional, si tu hook lo provee
   } = useVoiceRoom(voiceRoomId);
 
-  // Apuntar el video local al stream
   useEffect(() => {
     if (localVideoRef.current && localStreamRef.current)
       localVideoRef.current.srcObject = localStreamRef.current;
@@ -66,13 +67,18 @@ const VoiceRoom = ({ voiceRoomId }) => {
       </div>
 
       <div className={`voice-video-grid participants-${totalParticipants}`}>
-        <div className="voice-tile">
+        <div className={`voice-tile ${amISpeaking ? 'speaking' : ''}`}>
           <video ref={localVideoRef} autoPlay playsInline muted className="voice-video" />
           <div className="voice-tile-label">
             Tú {!isMicOn && <FaMicrophoneSlash />}
           </div>
         </div>
-        {participants.map(p => <RemoteTile key={p.userId} participant={p} />)}
+        {participants.map(p => (
+          <RemoteTile 
+            key={p.userId} 
+            participant={p} 
+          />
+        ))}
       </div>
 
       <div className="voice-controls">

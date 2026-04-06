@@ -7,6 +7,7 @@ import { FaPaperclip, FaPaperPlane, FaStar, FaPhone, FaReply, FaEdit, FaTrash, F
 import { getFileUrl, getFileName, toggleFavoriteMessage } from "utils/chat";
 import "./chat.css";
 import "./call.css";
+import { smoothScroll } from "utils/smoothScroll";
 
 const formatTime = (dateStr) => {
   if (!dateStr) return "";
@@ -14,7 +15,7 @@ const formatTime = (dateStr) => {
   return d.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
 };
 
-const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete }) => {
+const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete, onReplyToOriginal }) => {
   const [favorite, setFavorite] = useState(msg.favorite === 1);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef();
@@ -45,12 +46,16 @@ const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete }
   return (
     <div className="message-wrapper">
       <div className="message-content">
-        {msg.reply_to_id && (
-          <div className="reply-preview">
-            <span className="reply-author">{msg.reply_sender_name}</span>
-            <span className="reply-text">{msg.reply_content}</span>
-          </div>
-        )}
+      {msg.reply_to_id && (
+        <div
+          className="reply-preview"
+          onClick={() => onReplyToOriginal && onReplyToOriginal(msg.reply_to_id)}
+          style={{ cursor: "pointer" }}
+        >
+          <div className="reply-author">{msg.reply_sender_name}</div>
+          <div className="reply-text">{msg.reply_content}</div>
+        </div>
+      )}
 
         {{
           image: <img className="content-image" src={src} alt="imagen" onClick={() => onImageClick(src)} />,
@@ -118,6 +123,7 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
   const chatPageRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const messagesRef = useRef(null);
+  const messageRefs = useRef({});
 
   // 3. Hooks de datos
   const { messages, send, sendFile, deleteMessage, editMessage } = useChat(roomId, userId);
@@ -127,7 +133,13 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
   const scrollToBottom = () => {
     const container = scrollContainerRef.current;
     if (!container) return;
-    container.scrollTo({ top: container.scrollHeight });
+
+    const targetPos = container.scrollHeight - container.clientHeight;
+
+    smoothScroll(container, targetPos, {
+      maxDuration: 500,
+      onComplete: () => setIsAtBottom(true)
+    });
   };
 
   const handleScroll = () => {
@@ -188,6 +200,27 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
     setInput("");
   };
 
+  const handleInputChange = (e) => {
+    const textarea = e.target;
+    textarea.style.height = "auto";
+    const maxHeight = 4 * 1.4 * 16;
+    textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + "px";
+    setInput(textarea.value);
+  };
+
+  const handleScrollToOriginal = (msgId) => {
+    const container = scrollContainerRef.current;
+    const target = messageRefs.current[msgId];
+    if (!container || !target) return;
+
+    const targetPos = target.offsetTop - container.offsetTop - (container.clientHeight / 2) + (target.clientHeight / 2);
+
+    smoothScroll(container, targetPos, { maxDuration: 800 });
+
+    target.classList.add("highlighted");
+    setTimeout(() => target.classList.remove("highlighted"), 1500);
+  };
+
   return (
     <div className="chat-page" ref={chatPageRef}>
       {activeCall && !isMinimized && (
@@ -213,6 +246,7 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
           {messages.map((msg) => (
             <div
               key={msg.id || `${msg.sender_id}-${msg.content}`}
+              ref={(el) => (messageRefs.current[msg.id] = el)}
               className={`chat-message ${Number(msg.sender_id) === Number(userId) ? "mine" : "other"}`}
             >
               <span className="sender">{msg.sender_name || msg.sender_id}</span>
@@ -221,6 +255,7 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
                 onImageClick={setModalImage}
                 isMine={Number(msg.sender_id) === Number(userId)}
                 onReply={handleReply}
+                onReplyToOriginal={handleScrollToOriginal}
                 onEdit={handleEdit}
                 onDelete={deleteMessage}
               />
@@ -259,14 +294,14 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
           )}
 
           <div className="chat-input">
-            <label htmlFor="file-upload" className="icon-btn">
+            <label htmlFor="file-upload" className="upload-btn">
               <FaPaperclip />
             </label>
             <input id="file-upload" type="file" onChange={handleFile} style={{ display: "none" }} />
 
             <textarea
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={handleInputChange}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
