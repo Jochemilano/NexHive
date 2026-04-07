@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useChat } from "hooks/useChat";
-import { useCall } from "context/CallContext";
+import { useChat } from "@/hooks/useChat";
+import { useCall } from "@/context/CallContext";
 import CallVideo from "./Callvideo";
 import ImageModal from "./ImageModal";
 import { FaPaperclip, FaPaperPlane, FaStar, FaPhone, FaReply, FaEdit, FaTrash, FaTimes } from "react-icons/fa";
-import { getFileUrl, getFileName, toggleFavoriteMessage } from "utils/chat";
+import { getFileUrl, getFileName, toggleFavoriteMessage } from "@/utils/chat";
 import "./chat.css";
 import "./call.css";
-import { smoothScroll } from "utils/smoothScroll";
+import { smoothScroll } from "@/utils/smoothScroll";
 
 const formatTime = (dateStr) => {
   if (!dateStr) return "";

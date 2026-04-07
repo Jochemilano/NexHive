@@ -1,6 +1,6 @@
-import Modal from "components/modal/Modal";
-import Input from "components/input/Input";
-import CollaboratorPicker from "components/input/CollaboratorPicker";
+import Modal from "@/components/modal/Modal";
+import Input from "@/components/input/Input";
+import CollaboratorPicker from "@/components/input/CollaboratorPicker";
 
 const CreateGroupModal = ({
   isOpen,

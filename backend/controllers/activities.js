@@ -3,22 +3,31 @@ const router = express.Router();
 const db = require("../db");
 const verifyToken = require("../middleware/verifyToken");
 
-// Crear actividad — guarda created_by con el userId del token
+// Función auxiliar para formatear fechas a SQL
+function formatDateForSQL(date) {
+  if (!date) return null;
+  const d = new Date(date);
+  if (isNaN(d)) {
+    console.warn("Fecha inválida:", date);
+    return null;
+  }
+  return d.toISOString().slice(0, 19).replace("T", " ");
+}
+
+// ------------------------
+// POST /activities — Crear actividad
+// ------------------------
 router.post("/activities", verifyToken, async (req, res) => {
   const { name, projectId, description, status, start_date, deadline } = req.body;
   const userId = req.userId;
 
-  if (!name || !projectId)
+  if (!name || !projectId) {
     return res.status(400).json({ message: "Datos incompletos" });
-
-  function formatDateForSQL(date) {
-    if (!date) return null;
-    const d = new Date(date);
-    return d.toISOString().slice(0, 19).replace("T", " ");
   }
 
   try {
-    const check = await query(
+    // Verificar acceso del usuario al proyecto
+    const [check] = await db.query(
       `SELECT g.id
        FROM projects p
        JOIN groups g ON p.group_id = g.id
@@ -26,14 +35,16 @@ router.post("/activities", verifyToken, async (req, res) => {
        WHERE p.id = ? AND ug.user_id = ?`,
       [projectId, userId]
     );
-    if (check.length === 0)
+
+    if (check.length === 0) {
       return res.status(403).json({ message: "No tiene acceso a este proyecto" });
+    }
 
     const startDateTime = start_date ? new Date(start_date) : null;
     const deadlineDateTime = deadline ? new Date(deadline) : null;
 
-    // Se agrega created_by para registrar el responsable
-    const activityResult = await query(
+    // Insertar actividad
+    const [activityResult] = await db.query(
       `INSERT INTO activities
          (name, project_id, description, status, start_date, deadline, created_by)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -47,25 +58,25 @@ router.post("/activities", verifyToken, async (req, res) => {
         userId,
       ]
     );
-
     const activityId = activityResult.insertId;
 
-    const eventResult = await query(
+    // Insertar evento en calendario
+    const [eventResult] = await db.query(
       `INSERT INTO calendar_events
          (title, description, start_datetime, end_datetime, type, created_by)
        VALUES (?, ?, ?, ?, 'ACTIVITY', ?)`,
       [name, description || "", formatDateForSQL(startDateTime), formatDateForSQL(deadlineDateTime), userId]
     );
-
     const eventId = eventResult.insertId;
 
-    await query(
+    // Vincular actividad con evento
+    await db.query(
       "INSERT INTO calendar_event_activities (event_id, activity_id) VALUES (?, ?)",
       [eventId, activityId]
     );
 
-    // Traer el nombre del usuario para devolverlo en la respuesta
-    const userRows = await query("SELECT name FROM users WHERE id = ?", [userId]);
+    // Traer nombre del usuario
+    const [userRows] = await db.query("SELECT name FROM users WHERE id = ?", [userId]);
     const createdByName = userRows[0]?.name ?? null;
 
     res.json({
@@ -88,11 +99,13 @@ router.post("/activities", verifyToken, async (req, res) => {
     });
   } catch (err) {
     console.error("ERROR DB CREATE ACTIVITY:", err);
-    res.status(500).json({ message: "Error creando actividad" });
+    res.status(500).json({ message: "Error creando actividad", error: err.message });
   }
 });
 
-// Traer detalles de actividad
+// ------------------------
+// GET /activities/:id — Traer detalles de actividad
+// ------------------------
 router.get("/activities/:id", verifyToken, async (req, res) => {
   const activityId = req.params.id;
 
@@ -117,16 +130,14 @@ router.get("/activities/:id", verifyToken, async (req, res) => {
     );
 
     const activity = rows[0];
-    if (!activity)
-      return res.status(404).json({ message: "Actividad no encontrada" });
+    if (!activity) return res.status(404).json({ message: "Actividad no encontrada" });
 
     const [check] = await db.query(
       "SELECT * FROM user_groups WHERE user_id=? AND group_id=?",
       [req.userId, activity.group_id]
     );
 
-    if (check.length === 0)
-      return res.status(403).json({ message: "No tiene acceso a esta actividad" });
+    if (check.length === 0) return res.status(403).json({ message: "No tiene acceso a esta actividad" });
 
     res.json({
       id: activity.id,
@@ -141,17 +152,18 @@ router.get("/activities/:id", verifyToken, async (req, res) => {
     });
   } catch (err) {
     console.error("ERROR DB GET ACTIVITY:", err);
-    res.status(500).json({ message: "Error al obtener actividad" });
+    res.status(500).json({ message: "Error al obtener actividad", error: err.message });
   }
 });
 
-// Editar actividad
+// ------------------------
+// PUT /activities/:id — Editar actividad
+// ------------------------
 router.put("/activities/:id", verifyToken, async (req, res) => {
   const activityId = req.params.id;
   const { name, description, status, start_date, deadline } = req.body;
 
-  if (!name)
-    return res.status(400).json({ message: "Nombre requerido" });
+  if (!name) return res.status(400).json({ message: "Nombre requerido" });
 
   try {
     const [rows] = await db.query(
@@ -163,22 +175,20 @@ router.put("/activities/:id", verifyToken, async (req, res) => {
     );
 
     const activity = rows[0];
-    if (!activity)
-      return res.status(404).json({ message: "Actividad no encontrada" });
+    if (!activity) return res.status(404).json({ message: "Actividad no encontrada" });
 
     const [check] = await db.query(
       "SELECT * FROM user_groups WHERE user_id=? AND group_id=?",
       [req.userId, activity.group_id]
     );
 
-    if (check.length === 0)
-      return res.status(403).json({ message: "No tiene acceso a esta actividad" });
+    if (check.length === 0) return res.status(403).json({ message: "No tiene acceso a esta actividad" });
 
     await db.query(
       `UPDATE activities
        SET name=?, description=?, status=?, start_date=?, deadline=?
        WHERE id=?`,
-      [name, description || "", status || "pending", start_date || null, deadline || null, activityId]
+      [name, description || "", status || "pending", formatDateForSQL(start_date), formatDateForSQL(deadline), activityId]
     );
 
     await db.query(
@@ -186,7 +196,7 @@ router.put("/activities/:id", verifyToken, async (req, res) => {
        JOIN calendar_event_activities cea ON e.id = cea.event_id
        SET e.title=?, e.description=?, e.start_datetime=?, e.end_datetime=?
        WHERE cea.activity_id=?`,
-      [name, description || "", start_date || null, deadline || null, activityId]
+      [name, description || "", formatDateForSQL(start_date), formatDateForSQL(deadline), activityId]
     );
 
     res.json({
@@ -199,7 +209,7 @@ router.put("/activities/:id", verifyToken, async (req, res) => {
     });
   } catch (err) {
     console.error("ERROR DB UPDATE ACTIVITY:", err);
-    res.status(500).json({ message: "Error actualizando actividad" });
+    res.status(500).json({ message: "Error actualizando actividad", error: err.message });
   }
 });
 

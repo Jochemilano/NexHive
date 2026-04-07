@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Peer from "simple-peer";
-import { socket } from "utils/socket";
+import { socket } from "@/utils/socket";
 
 export const useVoiceRoom = (voiceRoomId) => {
   const localStreamRef = useRef(null);

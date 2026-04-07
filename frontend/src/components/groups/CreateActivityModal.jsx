@@ -1,7 +1,7 @@
 // components/groups/CreateActivityModal
 import React, { useState } from "react";
-import Modal from "components/modal/Modal";
-import { Input, Textarea, Select } from "components/input/Input";
+import Modal from "@/components/modal/Modal";
+import { Input, Textarea, Select } from "@/components/input/Input";
 
 const CreateActivityModal = ({ isOpen, onClose, currentProjectId, onCreated }) => {
   const [activityName, setActivityName] = useState("");
@@ -14,7 +14,7 @@ const CreateActivityModal = ({ isOpen, onClose, currentProjectId, onCreated }) =
     if (!activityName.trim() || !currentProjectId) return;
 
     try {
-      const { createActivity } = await import("utils/activities");
+      const { createActivity } = await import("@/utils/activities");
       const newActivity = await createActivity({
         name: activityName,
         description: activityDescription,

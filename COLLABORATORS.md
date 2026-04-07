@@ -30,6 +30,8 @@ npm install socket.io-client
 npm install simple-peer@latest
 ---
 npm install process
+---
+npm install @craco/craco --save
 
 #backend
 npm init -y

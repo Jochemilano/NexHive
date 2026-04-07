@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchGroupDetails } from "utils/groups";
-import CreateActivityModal from "components/groups/CreateActivityModal";
-import EditActivityModal from "components/groups/EditActivityModal";
-import ViewActivityModal from "components/groups/ViewActivityModal";
-import Modal from "components/modal/Modal";
+import { fetchGroupDetails } from "@/utils/groups";
+import CreateActivityModal from "@/components/groups/CreateActivityModal";
+import EditActivityModal from "@/components/groups/EditActivityModal";
+import ViewActivityModal from "@/components/groups/ViewActivityModal";
+import Modal from "@/components/modal/Modal";
 import { BsThreeDots } from "react-icons/bs";
-import { useGroup } from "context/GroupContext";
+import { useGroup } from "@/context/GroupContext";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import "./GroupPage.css";
 

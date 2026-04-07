@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Modal from 'components/modal/Modal';
-import Input from 'components/input/Input';
+import Modal from '@/components/modal/Modal';
+import Input from '@/components/input/Input';
 
 const CreateEventModal = ({ isOpen, onClose, onSave, initialDate }) => {
   const [eventName, setEventName] = useState('');

@@ -1,16 +1,16 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import ProtectedRoute from "utils/protected-route";
-import Layout from "components/layout/Layout";
-import Calendar from "pages/Calendar";
-import Login from "pages/Login";
-import Favorites from "pages/Favorites";
-import GroupPage from "pages/GroupPage";
-import Home from "pages/Home";
-import ChatWrapper from "components/communication/ChatWrapper";
-import VoiceRoomWrapper from "components/communication/VoiceRoomWrapper";
-import { CallProvider } from "context/CallContext";
-import IncomingCallModal from "components/communication/IncomingCallModal";
-import FloatingCall from "components/communication/Floatingcall";
+import ProtectedRoute from "@/utils/protected-route";
+import Layout from "@/components/layout/Layout";
+import Calendar from "@/pages/Calendar";
+import Login from "@/pages/Login";
+import Favorites from "@/pages/Favorites";
+import GroupPage from "@/pages/GroupPage";
+import Home from "@/pages/Home";
+import ChatWrapper from "@/components/communication/ChatWrapper";
+import VoiceRoomWrapper from "@/components/communication/VoiceRoomWrapper";
+import { CallProvider } from "@/context/CallContext";
+import IncomingCallModal from "@/components/communication/IncomingCallModal";
+import FloatingCall from "@/components/communication/Floatingcall";
 
 export default function AppRouter() {
   return (

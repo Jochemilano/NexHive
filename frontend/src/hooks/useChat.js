@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { socket, joinRoom, sendMessage } from "utils/socket";
-import { apiFetch } from "utils/apiClient";
-import { uploadFile } from "utils/rooms";
+import { socket, joinRoom, sendMessage } from "@/utils/socket";
+import { apiFetch } from "@/utils/apiClient";
+import { uploadFile } from "@/utils/rooms";
 
 export const useChat = (roomId, userId) => {
   const [messages, setMessages] = useState([]);

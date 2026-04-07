@@ -1,4 +1,4 @@
-import { apiFetch } from "utils/apiClient";
+import { apiFetch } from "@/utils/apiClient";
 import { CONFIG } from "./config";
 
 // ── URLs ─────────────────────────────

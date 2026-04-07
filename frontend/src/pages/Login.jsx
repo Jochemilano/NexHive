@@ -1,6 +1,6 @@
 import { useState } from "react";
-import LoginBox from "components/login/LoginBox";
-import { login } from "utils/login";
+import LoginBox from "@/components/login/LoginBox";
+import { login } from "@/utils/login";
 
 const Login = () => {
   const [email, setEmail] = useState("");

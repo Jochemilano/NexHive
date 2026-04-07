@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { getUserFavorites, formatDate } from "utils/favorites";
-import { getFileUrl } from "utils/chat";
+import { getUserFavorites, formatDate } from "@/utils/favorites";
+import { getFileUrl } from "@/utils/chat";
 import "../styles.css";
 
 const Favorites = () => {

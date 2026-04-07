@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Modal from 'components/modal/Modal';
-import Input from 'components/input/Input';
-import { deletePersonalEvent, updatePersonalEvent } from 'utils/calendar';
+import Modal from '@/components/modal/Modal';
+import Input from '@/components/input/Input';
+import { deletePersonalEvent, updatePersonalEvent } from '@/utils/calendar';
 
 const EditPersonalEventModal = ({ isOpen, onClose, event, onUpdated, onDeleted }) => {
   const [eventName, setEventName] = useState('');

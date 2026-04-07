@@ -1,7 +1,7 @@
 import './App.css';
 import AppRouter from './router/AppRouter';
 import { useState, useEffect } from "react";
-import { preferencesApi } from "utils/preferences";
+import { preferencesApi } from "@/utils/preferences";
 
 function App() {
   const [userPreferences, setUserPreferences] = useState(null);

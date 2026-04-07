@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { useCall } from "context/CallContext";
-import { useCallMedia } from "hooks/useCallMedia";
+import { useCall } from "@/context/CallContext";
+import { useCallMedia } from "@/hooks/useCallMedia";
 import { FaExpand, FaPhone, FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash, FaDesktop, FaTimes } from "react-icons/fa";
 const CallVideo = ({ expanded = true }) => {
   const {

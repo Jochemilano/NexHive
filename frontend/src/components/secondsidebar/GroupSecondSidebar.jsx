@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { fetchGroupDetails, fetchGroupUsers } from "utils/groups";
-import Modal from "components/modal/Modal";
-import CreateProjectModal from "components/groups/CreateProjectModal";
+import { fetchGroupDetails, fetchGroupUsers } from "@/utils/groups";
+import Modal from "@/components/modal/Modal";
+import CreateProjectModal from "@/components/groups/CreateProjectModal";
 import { FaHashtag, FaVolumeUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useGroup } from "context/GroupContext";
+import { useGroup } from "@/context/GroupContext";
 
 const GroupSecondSidebar = ({ groupId }) => {
   const [details, setDetails] = useState({ channels: [], projects: [] });

@@ -1,7 +1,7 @@
 // components/groups/ViewActivityModal
 import React, { useEffect, useState } from "react";
-import Modal from "components/modal/Modal";
-import { apiFetch } from "utils/apiClient";
+import Modal from "@/components/modal/Modal";
+import { apiFetch } from "@/utils/apiClient";
 import "./ViewActivityModal.css";
 import { FaIdBadge, FaAlignLeft, FaUserTie, FaCalendarAlt, FaFlagCheckered, FaClock } from "react-icons/fa";
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchAllUsers } from "utils/groups";
+import { fetchAllUsers } from "@/utils/groups";
 
 export const useCreateGroupModal = (isOpen) => {
   const [name, setName] = useState("");

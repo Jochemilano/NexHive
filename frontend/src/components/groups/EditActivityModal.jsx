@@ -1,8 +1,8 @@
 // components/groups/EditActivityModal
 import React, { useEffect, useState } from "react";
-import Modal from "components/modal/Modal";
-import { Input, Textarea, Select, DateInput } from "components/input/Input";
-import { getActivityDetails, updateActivity } from "utils/activities";
+import Modal from "@/components/modal/Modal";
+import { Input, Textarea, Select, DateInput } from "@/components/input/Input";
+import { getActivityDetails, updateActivity } from "@/utils/activities";
 
 const EditActivityModal = ({ isOpen, onClose, activityId, onUpdated }) => {
   const [loading, setLoading] = useState(true);

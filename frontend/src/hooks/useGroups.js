@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchGroups, createGroup, fetchAllUsers } from "utils/groups";
+import { fetchGroups, createGroup, fetchAllUsers } from "@/utils/groups";
 
 export const useGroups = () => {
   const [groups, setGroups] = useState([]);

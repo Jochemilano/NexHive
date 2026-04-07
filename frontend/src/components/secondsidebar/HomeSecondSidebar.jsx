@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { fetchAllUsers } from "utils/groups";
-import { apiFetch } from "utils/apiClient";
+import { fetchAllUsers } from "@/utils/groups";
+import { apiFetch } from "@/utils/apiClient";
 import { useNavigate } from "react-router-dom";
 
 const HomeSecondSidebar = () => {

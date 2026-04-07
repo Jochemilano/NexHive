@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { useVoiceRoom } from "hooks/usevoiceroom";
+import { useVoiceRoom } from "@/hooks/usevoiceroom";
 import {
   FaMicrophone, FaMicrophoneSlash,
   FaVideo, FaVideoSlash,

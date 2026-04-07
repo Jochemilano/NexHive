@@ -1,8 +1,8 @@
-import Sidebar from "components/sidebar/Sidebar";
-import TopBar from "components/topBar/TopBar";
-import SecondSidebar from "components/secondsidebar/SecondSidebar";
+import Sidebar from "@/components/sidebar/Sidebar";
+import TopBar from "@/components/topBar/TopBar";
+import SecondSidebar from "@/components/secondsidebar/SecondSidebar";
 import { Outlet } from "react-router-dom";
-import { GroupProvider } from "context/GroupContext";
+import { GroupProvider } from "@/context/GroupContext";
 import "./Layout.css";
 
 export default function Layout() {

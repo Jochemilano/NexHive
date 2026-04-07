@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import Modal from "components/modal/Modal";
-import { Input, Textarea } from "components/input/Input";
-import CollaboratorPicker from "components/input/CollaboratorPicker";
-import { createProject } from "utils/projects";
-import useCollaborators from "hooks/useCollaborators";
+import Modal from "@/components/modal/Modal";
+import { Input, Textarea } from "@/components/input/Input";
+import CollaboratorPicker from "@/components/input/CollaboratorPicker";
+import { createProject } from "@/utils/projects";
+import useCollaborators from "@/hooks/useCollaborators";
 
 const CreateProjectModal = ({ isOpen, onClose, groupId, availableUsers = [], onCreated }) => {
   const [projectName, setProjectName] = useState("");

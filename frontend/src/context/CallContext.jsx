@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
-import { socket } from "utils/socket";
+import { socket } from "@/utils/socket";
 import Peer from "simple-peer";
 import { useNavigate } from "react-router-dom";
-import { apiFetch } from "utils/apiClient";
+import { apiFetch } from "@/utils/apiClient";
 
 const CallContext = createContext(null);
 

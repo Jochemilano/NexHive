@@ -1,5 +1,5 @@
 import "./LoginBox.css";
-import Input from "components/input/Input";
+import Input from "@/components/input/Input";
 
 const LoginBox = ({
   title,

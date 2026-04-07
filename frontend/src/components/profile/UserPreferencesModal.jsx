@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Modal from "components/modal/Modal";
+import Modal from "@/components/modal/Modal";
 import { FaGlobe, FaPalette, FaBell } from "react-icons/fa";
 import "./UserPreferencesModal.css";
 

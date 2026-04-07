@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Modal from "components/modal/Modal";
-import SearchBar from "components/searchbar/Searchbar";
-import ProfileModal from "components/profile/ProfileModal";
-import { getProfile } from "utils/profile";
+import Modal from "@/components/modal/Modal";
+import SearchBar from "@/components/searchbar/Searchbar";
+import ProfileModal from "@/components/profile/ProfileModal";
+import { getProfile } from "@/utils/profile";
 import "./TopBar.css";
 
 const TopBar = () => {

@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaPlus, FaCog, FaUserAlt } from "react-icons/fa";
-import Modal from "components/modal/Modal";
-import Separator from "components/separator/Separator";
-import Button from "components/button/Button";
-import { useGroups } from "hooks/useGroups";
-import { useCreateGroupModal } from "hooks/useCreateGroupModal";
-import CreateGroupModal from "components/groups/CreateGroupModal";
+import Modal from "@/components/modal/Modal";
+import Separator from "@/components/separator/Separator";
+import Button from "@/components/button/Button";
+import { useGroups } from "@/hooks/useGroups";
+import { useCreateGroupModal } from "@/hooks/useCreateGroupModal";
+import CreateGroupModal from "@/components/groups/CreateGroupModal";
 import "./Sidebar.css";
-import UserPreferencesModal from 'components/profile/UserPreferencesModal';
-import { preferencesApi } from "utils/preferences";
-import ProfileModal from 'components/profile/ProfileModal';
-import { getProfile } from "utils/profile";
+import UserPreferencesModal from '@/components/profile/UserPreferencesModal';
+import { preferencesApi } from "@/utils/preferences";
+import ProfileModal from '@/components/profile/ProfileModal';
+import { getProfile } from "@/utils/profile";
 
 const NAV_ITEMS = [
   { path: "/home",      label: "H",  tooltip: "Home" },
