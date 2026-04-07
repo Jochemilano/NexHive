@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { fetchGroupDetails } from "@/utils/groups";
 import CreateActivityModal from "@/components/groups/CreateActivityModal";
@@ -27,14 +27,38 @@ const formatDate = (d) => {
   });
 };
 
+const normalizeText = (str) => 
+  str?.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() || "";
+
+const highlightText = (text, search) => {
+  if (!search) return text;
+
+  const escapedSearch = search.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+  const regex = new RegExp(`(${escapedSearch})`, "gi");
+
+  const parts = text.split(regex);
+
+  return parts.map((part, i) =>
+    normalizeText(part) === normalizeText(search) ? (
+      <span key={i} className="highlighted-text">{part}</span>
+    ) : (
+      part
+    )
+  );
+};
+
 const GroupPage = () => {
   const { groupId } = useParams();
   const { selectedProjectId } = useGroup();
+
   const [projects, setProjects] = useState([]);
   const [createModal, setCreateModal] = useState(false);
   const [editModal, setEditModal] = useState({ open: false, activityId: null });
   const [viewModal, setViewModal] = useState({ open: false, activityId: null });
   const [openMenuId, setOpenMenuId] = useState(null);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const loadDetails = async () => {
     if (!groupId) return;
@@ -60,10 +84,21 @@ const GroupPage = () => {
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
   const activities = selectedProject?.activities || [];
 
+  const filteredActivities = useMemo(() => {
+    return activities.filter((a) => {
+      const matchesSearch =
+        normalizeText(a.name).includes(normalizeText(searchTerm)) ||
+        normalizeText(a.created_by_name).includes(normalizeText(searchTerm));
+
+      const matchesStatus = statusFilter === "all" || a.status === statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [activities, searchTerm, statusFilter]);
+
   const handleDelete = (activity) => {
     const confirmed = window.confirm(`¿Eliminar la actividad "${activity.name}"?`);
     if (confirmed) {
-      // TODO: llamar endpoint DELETE cuando esté disponible en backend
       console.log("Eliminar actividad:", activity.id);
     }
   };
@@ -82,9 +117,12 @@ const GroupPage = () => {
               {selectedProject?.name ?? "Selecciona un proyecto"}
             </h1>
             {selectedProject && (
-              <p className="group-page__subtitle">{activities.length} actividades</p>
+              <p className="group-page__subtitle">
+                {filteredActivities.length} actividades encontradas
+              </p>
             )}
           </div>
+
           {selectedProject && (
             <Modal.Button onClick={() => setCreateModal(true)}>
               + Nueva actividad
@@ -92,15 +130,22 @@ const GroupPage = () => {
           )}
         </div>
 
-        {selectedProject && (
+        {selectedProject ? (
           <>
             <div className="group-page__filters">
               <input
                 type="text"
-                placeholder="Buscar actividad..."
+                placeholder="Buscar por nombre o responsable..."
                 className="group-page__search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <select className="group-page__filter">
+
+              <select
+                className="group-page__filter"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
                 <option value="all">Todos los estados</option>
                 <option value="pending">Pendiente</option>
                 <option value="in_progress">En progreso</option>
@@ -122,17 +167,19 @@ const GroupPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {activities.length === 0 ? (
+                  {filteredActivities.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="activity-table__empty">
-                        Este proyecto no tiene actividades aún.
+                        {activities.length === 0 
+                          ? "Este proyecto no tiene actividades aún." 
+                          : "No hay actividades que coincidan con la búsqueda."}
                       </td>
                     </tr>
                   ) : (
-                    activities.map((a) => (
+                    filteredActivities.map((a) => (
                       <tr key={`activity-${a.id}`}>
-                        <td>{a.name || "Sin nombre"}</td>
-                        <td>{a.created_by_name || "—"}</td>
+                        <td>{highlightText(a.name || "Sin nombre", searchTerm)}</td>
+                        <td>{highlightText(a.created_by_name || "—", searchTerm)}</td>
                         <td>
                           <span className={`activity-status activity-status--${a.status}`}>
                             {STATUS_LABELS[a.status] ?? "—"}
@@ -180,7 +227,7 @@ const GroupPage = () => {
                                     setOpenMenuId(null);
                                   }}
                                 >
-                                   <FaTrash style={{ marginRight: "12px" }} />
+                                  <FaTrash style={{ marginRight: "12px" }} />
                                   Eliminar
                                 </button>
                               </div>
@@ -194,10 +241,10 @@ const GroupPage = () => {
               </table>
             </div>
           </>
-        )}
-
-        {!selectedProject && projects.length === 0 && (
-          <p className="group-page__empty">No hay proyectos en este grupo todavía.</p>
+        ) : (
+          !selectedProject && projects.length === 0 && (
+            <p className="group-page__empty">No hay proyectos en este grupo todavía.</p>
+          )
         )}
       </div>
 

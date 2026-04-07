@@ -268,3 +268,12 @@ tr:has(.activity-menu__dropdown) {
   background: var(--text-secondary); 
   border-radius: 10px; 
 }
+
+/* ===================== RESALTADO DE BÚSQUEDA ===================== */
+.highlighted-text {
+  background-color: var(--secondary);
+  color: var(--bg-base);
+  font-weight: bold; 
+  border-radius: 2px;
+  padding: 0 2px;
+}

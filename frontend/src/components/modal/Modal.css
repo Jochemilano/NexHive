@@ -1,4 +1,6 @@
-/* Botón de apertura del modal */
+/* ========================================================================== */
+/* BOTONES Y ACCIONES GENERALES */
+/* ========================================================================== */
 .modal-button {
   border: none;
   cursor: pointer;
@@ -8,13 +10,20 @@
   padding: 0.5rem 1rem;
   border-radius: var(--radius-pill);
   font-size: 14px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-button:hover {
   background: var(--primary-hover);
+  transform: translateY(-1px);
 }
 
-/* Overlay semi-transparente */
+/* ========================================================================== */
+/* ESTRUCTURA Y CAPAS DEL MODAL */
+/* ========================================================================== */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -26,96 +35,167 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(4px);
 }
 
 /* Contenido flotante del modal */
 .modal-content {
   background-color: var(--bg-base);
   color: var(--text-primary);
-  border-radius: 15px;
-  width: 500px;
-  max-width: 90%;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  width: 550px;
+  max-width: 95%;
+  box-shadow: 0 10px 40px var(--shadow);;
   overflow: hidden;
   animation: modal-fade 0.25s ease;
+  border: 1px solid var(--border);
 }
 
 /* Animación de entrada */
 @keyframes modal-fade {
-  from { transform: scale(0.95); opacity: 0; }
+  from { transform: scale(0.97); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
 
-/* HEADER: título y botón cerrar */
+/* ========================================================================== */
+/* CABECERA Y CIERRE */
+/* ========================================================================== */
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  border-bottom: 2px solid var(--bg-soft);
-  backdrop-filter: blur(5px);
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--bg-soft);
+  background: var(--bg-base);
 }
 
 .modal-header h2 {
   margin: 0;
   font-size: 1.25rem;
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .modal-close-btn {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   cursor: pointer;
   color: var(--text-secondary);
-  transition: 0.3s ease;
+  transition: all 0.2s ease;
+  padding: 4px;
+  line-height: 0;
 }
 
 .modal-close-btn:hover {
   color: var(--text-primary);
-  transform: scale(1.1);
+  transform: rotate(90deg);
 }
 
-/* BODY */
+/* ========================================================================== */
+/* CUERPO DEL MODAL Y SCROLLBAR */
+/* ========================================================================== */
 .modal-body {
-  padding: 1rem;
+  padding: 1.5rem;
+  max-height: 65vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--bg-soft);;
+}
+
+.modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: var(--bg-soft);
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--bg-soft);
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background-color: var(--primary);
+}
+
+/* ========================================================================== */
+/* FORMULARIOS (INPUTS Y TEXTAREA) */
+/* ========================================================================== */
+.modal-body input,
+.modal-body textarea,
+.modal-body select {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-search);
+  padding: 0.8rem;
+  color: var(--text-primary);
+  font-family: inherit;
   font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.modal-body input:focus,
+.modal-body textarea:focus,
+.modal-body select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--bg-active);
+}
+
+.modal-body textarea {
+  min-height: 100px;
+  max-height: 400px;
+  resize: vertical;
   line-height: 1.5;
 }
 
-/* FOOTER: contenedor y botones */
+/* ========================================================================== */
+/* PIE DE PÁGINA Y BOTONES DE ACCIÓN */
+/* ========================================================================== */
 .modal-footer {
   display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  padding: 1rem;
-  border-top: 2px solid var(--bg-soft);
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg-soft);
 }
 
 .modal-cancel {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 0.6rem 1.2rem;
   border-radius: var(--radius-pill);
-  height: 2.5rem;
-  width: 6rem;
-  border: 1px solid var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-cancel:hover {
+  background: var(--bg-hover);
   color: var(--text-primary);
-  background: transparent;
-  transition: all 0.3s ease;
+  border-color: var(--border);
 }
 
 .modal-accept {
-  border-radius: var(--radius-pill);
-  height: 2.5rem;
-  width: 6rem;
+  background: var(--primary);
   border: none;
-  background-color: var(--primary);
-  color: var(--text-primary);
-  transition: all 0.3s ease;
+  color: #ffffff;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-pill);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.modal-accept:hover,
-.modal-cancel:hover {
-  cursor: pointer;
-  transform: scale(1.05);
-  filter: brightness(1.05);
+.modal-accept:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 4px 12px var(--shadow);
 }

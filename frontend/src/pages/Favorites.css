@@ -1,0 +1,119 @@
+.favorites-page {
+  padding: 1rem;
+  max-width: 100%;
+  margin: 0;
+}
+
+.favorites-page h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.favorites-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.favorite-message {
+  background: var(--bg-soft);
+  border-radius: 14px;
+  padding: 0.5rem 0.7rem;
+  max-width: 400px;
+  width: fit-content;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border: none;
+  box-shadow: none;
+  transition: all 0.15s ease;
+}
+
+.favorite-message:hover {
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+
+.theme-dark .favorite-message,
+.theme-dark-pro .favorite-message,
+.theme-purple .favorite-message {
+  background: var(--bg-soft);
+  box-shadow: none;
+}
+
+.message-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 180px;
+}
+
+.sender {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 0.8rem;
+}
+
+.date {
+  font-size: 0.65rem;
+  opacity: 0.7;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.message-content p {
+  margin: 0;
+  color: var(--text-primary);
+  line-height: 1.4;
+  word-wrap: break-word;
+  font-size: 0.9rem;
+}
+
+.message-content img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin-top: 0.3rem;
+}
+
+.favorites-page p {
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+/*Boton de favs*/
+.favorite-message {
+  position: relative;
+  padding: 0.5rem 0.7rem;
+  max-width: 400px;
+  width: fit-content;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  background: var(--bg-soft);
+  border-radius: 14px;
+}
+
+.favorite-toggle-btn {
+  position: absolute;
+  top: 50%;
+  right: -14px;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-soft);
+  background: var(--bg-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.favorite-toggle-btn:hover {
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
