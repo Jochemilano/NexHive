@@ -1,5 +1,7 @@
+import { useState } from "react";
 import Modal from "@/components/modal/Modal";
 import Input from "@/components/input/Input";
+import AvatarInput from "./AvatarInput"
 import CollaboratorPicker from "@/components/input/CollaboratorPicker";
 
 const CreateGroupModal = ({
@@ -13,17 +15,23 @@ const CreateGroupModal = ({
   removeCollaborator,
   handleCreate
 }) => {
+  const [avatarFile, setAvatarFile] = useState(null);
+
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
       <Modal.Header onClose={handleClose}>Crea un grupo</Modal.Header>
+
       <Modal.Body>
+        <AvatarInput onFileChange={setAvatarFile} />
+
         <Input
           label="Nombre del grupo"
           type="text"
           placeholder="Dinos el nombre del grupo"
           value={name}
           onChange={e => setName(e.target.value)}
-        />
+        /> 
+
         <CollaboratorPicker
           availableUsers={availableUsers}
           selectedCollaborators={selectedCollaborators}
@@ -31,8 +39,11 @@ const CreateGroupModal = ({
           onRemove={removeCollaborator}
         />
       </Modal.Body>
+
       <Modal.Footer onClose={handleClose}>
-        <Modal.AcceptButton onClick={handleCreate}>Crear</Modal.AcceptButton>
+        <Modal.AcceptButton onClick={() => handleCreate(avatarFile)}>
+          Crear
+        </Modal.AcceptButton>
       </Modal.Footer>
     </Modal>
   );

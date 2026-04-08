@@ -4,6 +4,7 @@ import { FaCamera } from "react-icons/fa";
 import { updateProfilePic } from "@/utils/profile";
 import { CONFIG } from "@/utils/config";
 import "./ProfileModal.css";
+import { getAvatarUrl } from "@/utils/media";
 
 const ROL_LABEL = { 1: "Owner", 2: "Admin", 3: "IT", 4: "Técnico" };
 
@@ -18,7 +19,7 @@ const ProfileModal = ({ isOpen, onClose, perfil, onPicUpdated, onLogout }) => {
     formData.append("file", file);
 
     try {
-      const res = await fetch(CONFIG.UPLOAD_URL, {
+      const res = await fetch(`${CONFIG.BASE_URL}/upload`, {
         method: "POST",
         body: formData,
       });
@@ -44,7 +45,7 @@ const ProfileModal = ({ isOpen, onClose, perfil, onPicUpdated, onLogout }) => {
             <div className="profile-pic-wrapper" onClick={() => fileRef.current.click()}>
               {perfil?.profile_pic ? (
                 <img
-                  src={`${CONFIG.BASE_URL}${perfil.profile_pic}`}
+                  src={getAvatarUrl(perfil.profile_pic)}
                   alt="Perfil"
                   className="profile-pic"
                 />

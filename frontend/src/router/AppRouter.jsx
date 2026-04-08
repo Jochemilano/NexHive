@@ -4,7 +4,7 @@ import Layout from "@/components/layout/Layout";
 import Calendar from "@/pages/Calendar";
 import Login from "@/pages/Login";
 import Favorites from "@/pages/Favorites";
-import GroupPage from "@/pages/GroupPage";
+import GroupPage from "@/components/groups/GroupPage";
 import Home from "@/pages/Home";
 import ChatWrapper from "@/components/communication/ChatWrapper";
 import VoiceRoomWrapper from "@/components/communication/VoiceRoomWrapper";

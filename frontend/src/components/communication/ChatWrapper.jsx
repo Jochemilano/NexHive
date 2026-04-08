@@ -24,7 +24,11 @@ export default function ChatWrapper() {
         // 2. Traer el otro participante de la sala
         const participants = await apiFetch(`rooms/${chatRoomId}/participants`);
         if (participants.length > 0) {
-          setTargetUser({ id: participants[0].id, name: participants[0].name });
+          setTargetUser({ 
+            id: participants[0].id, 
+            name: participants[0].name,
+            avatar: participants[0].profile_pic
+          });
         }
 
       } catch (err) {
@@ -55,6 +59,7 @@ export default function ChatWrapper() {
       userId={userId}
       targetUserId={targetUser.id}
       targetUserName={targetUser.name}
+      targetUserAvatar={targetUser.avatar}
     />
   );
 }

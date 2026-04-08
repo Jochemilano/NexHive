@@ -1,92 +1,52 @@
 import { useState, useEffect } from "react";
-import { fetchAllUsers, fetchGroupUsers } from "@/utils/groups";
 import Modal from "@/components/modal/Modal";
 import Input from "@/components/input/Input";
+import AvatarInput from "./AvatarInput";
 import CollaboratorPicker from "@/components/input/CollaboratorPicker";
-import "./GroupModal.css";
+import { updateGroup } from "@/utils/groups";
+import { getAvatarUrl } from "@/utils/media";
 
-const EditGroupModal = ({ isOpen, group, onClose, onUpdated }) => {
-  const [name, setName]                           = useState("");
-  const [allUsers, setAllUsers]                   = useState([]);
+const EditGroupModal = ({
+  isOpen,
+  handleClose,
+  group,
+  availableUsers,
+  onUpdate
+}) => {
+  const [name, setName] = useState("");
+  const [avatarFile, setAvatarFile] = useState(null);
   const [selectedCollaborators, setSelectedCollaborators] = useState([]);
-  const [currentUserId, setCurrentUserId]         = useState(null);
-  const [imageFile, setImageFile]                 = useState(null);
-  const [imagePreview, setImagePreview]           = useState(null);
 
   useEffect(() => {
-    if (!isOpen || !group) return;
-    setName(group.name || "");
-    setImagePreview(group.image_url || null);
-    setImageFile(null);
+    if (group) {
+      setName(group.name);
+      setSelectedCollaborators(group.collaborators || []);
+    }
+  }, [group]);
 
-    const uid = parseInt(localStorage.getItem("userId")) || null;
-    setCurrentUserId(uid);
-
-    fetchAllUsers()
-      .then(users => {
-        setAllUsers(users);
-        // pre-seleccionar integrantes actuales menos el usuario mismo
-        fetchGroupUsers(group.id)
-          .then(members => {
-            setSelectedCollaborators(members.filter(m => m.id !== uid));
-          })
-          .catch(() => setSelectedCollaborators([]));
-      })
-      .catch(err => console.error("Error cargando usuarios:", err));
-  }, [isOpen, group]);
-
-  const availableUsers = allUsers.filter(
-    u => u.id !== currentUserId && !selectedCollaborators.find(c => c.id === u.id)
-  );
-
-  const selectCollaborator = (e) => {
-    const userId = parseInt(e.target.value);
-    if (!userId) return;
-    const user = allUsers.find(u => u.id === userId);
-    if (user) setSelectedCollaborators(prev => [...prev, user]);
-    e.target.value = "";
+  const selectCollaborator = (userId) => {
+    setSelectedCollaborators(prev => [...prev, userId]);
   };
 
-  const removeCollaborator = (userId) =>
-    setSelectedCollaborators(prev => prev.filter(c => c.id !== userId));
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setImageFile(file);
-    const reader = new FileReader();
-    reader.onloadend = () => setImagePreview(reader.result);
-    reader.readAsDataURL(file);
+  const removeCollaborator = (userId) => {
+    setSelectedCollaborators(prev => prev.filter(id => id !== userId));
   };
 
   const handleSave = async () => {
-    if (!name.trim()) return alert("El nombre no puede estar vacío");
     try {
-      await onUpdated(group.id, name, selectedCollaborators.map(c => c.id), imageFile);
-    } catch {
-      alert("Error al actualizar el grupo");
+      await updateGroup(group.id, name, selectedCollaborators, avatarFile);
+      onUpdate(); // callback para refrescar lista
+      handleClose();
+    } catch (err) {
+      console.error("Error actualizando grupo:", err);
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <Modal.Header onClose={onClose}>Editar grupo</Modal.Header>
+    <Modal isOpen={isOpen} onClose={handleClose}>
+      <Modal.Header onClose={handleClose}>Editar grupo</Modal.Header>
       <Modal.Body>
-        <div className="group-image-picker">
-          <label className="group-image-label" htmlFor="edit-group-image-input">
-            {imagePreview
-              ? <img src={imagePreview} alt="preview" className="group-image-preview" />
-              : <span className="group-image-placeholder">+</span>
-            }
-          </label>
-          <input
-            id="edit-group-image-input"
-            type="file"
-            accept="image/*"
-            style={{ display: "none" }}
-            onChange={handleImageChange}
-          />
-        </div>
+        <AvatarInput onFileChange={setAvatarFile} currentAvatar={getAvatarUrl(group?.avatar)} />
         <Input
           label="Nombre del grupo"
           type="text"
@@ -101,8 +61,10 @@ const EditGroupModal = ({ isOpen, group, onClose, onUpdated }) => {
           onRemove={removeCollaborator}
         />
       </Modal.Body>
-      <Modal.Footer onClose={onClose}>
-        <Modal.AcceptButton onClick={handleSave}>Guardar</Modal.AcceptButton>
+      <Modal.Footer onClose={handleClose}>
+        <Modal.AcceptButton onClick={handleSave}>
+          Guardar cambios
+        </Modal.AcceptButton>
       </Modal.Footer>
     </Modal>
   );

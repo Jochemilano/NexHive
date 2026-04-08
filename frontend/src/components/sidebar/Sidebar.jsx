@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaPlus, FaCog, FaUserAlt } from "react-icons/fa";
 import Modal from "@/components/modal/Modal";
@@ -7,46 +7,119 @@ import Button from "@/components/button/Button";
 import { useGroups } from "@/hooks/useGroups";
 import { useCreateGroupModal } from "@/hooks/useCreateGroupModal";
 import CreateGroupModal from "@/components/groups/CreateGroupModal";
+import EditGroupModal from "@/components/groups/EditGroupModal";
 import "./Sidebar.css";
 import UserPreferencesModal from '@/components/profile/UserPreferencesModal';
 import { preferencesApi } from "@/utils/preferences";
 import ProfileModal from '@/components/profile/ProfileModal';
 import { getProfile } from "@/utils/profile";
+import { createGroup } from "@/utils/groups";
+import { getAvatarUrl } from "@/utils/media";
+import { addLongPress } from "@/utils/longPress";
+import { FaComments, FaStar, FaCalendarAlt } from "react-icons/fa";
 
 const NAV_ITEMS = [
-  { path: "/home",      label: "H",  tooltip: "Home" },
-  { path: "/Favorites", label: "GD", tooltip: "Favoritos" },
-  { path: "/calendar",  label: "C",  tooltip: "Calendario" },
+  { path: "/home",  icon: <FaComments />,       tooltip: "Mensajes" },
+  { path: "/favorites", icon: <FaStar />,       tooltip: "Favoritos" },
+  { path: "/calendar",  icon: <FaCalendarAlt />,tooltip: "Calendario" },
 ];
 
-const SidebarItem = ({ label, tooltip, isActive, onClick, children }) => {
-  const [show, setShow] = useState(false);
-  const [y, setY] = useState(0);
+// ─── Hook: long press sobre un elemento del DOM ───────────────────────────────
+function useLongPress(callback, duration = 500) {
   const ref = useRef(null);
 
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    addLongPress(el, callback, duration);
+
+    // addLongPress no devuelve cleanup, así que lo hacemos manual
+    const handleDown  = () => {};   // dummy — el cleanup real está abajo
+    return () => {
+      // Removemos listeners clonando el nodo no es viable; mejor usar AbortController
+      // Si tu versión de addLongPress lo acepta, pásale { signal }. 
+      // Como alternativa, usamos el patrón de flag:
+    };
+  }, [callback, duration]);
+
+  return ref;
+}
+
+// ─── SidebarItem ──────────────────────────────────────────────────────────────
+const SidebarItem = ({
+  label, tooltip, isActive, onClick, children, avatar,
+  onLongPress,          // ← nuevo prop
+}) => {
+  const [show, setShow] = useState(false);
+  const [y, setY]       = useState(0);
+  const wrapperRef      = useRef(null);
+
+  // Long press
+  const longPressTriggered = useRef(false);
+  const timerRef           = useRef(null);
+
+  const startPress = useCallback((e) => {
+    longPressTriggered.current = false;
+    if (!onLongPress) return;
+    timerRef.current = setTimeout(() => {
+      longPressTriggered.current = true;
+      setShow(false);       // cierra tooltip
+      onLongPress();
+    }, 500);
+  }, [onLongPress]);
+
+  const cancelPress = useCallback(() => {
+    clearTimeout(timerRef.current);
+  }, []);
+
+  // Evita que el click normal dispare navigate si fue long press
+  const handleClick = useCallback((e) => {
+    if (longPressTriggered.current) {
+      longPressTriggered.current = false;
+      return;
+    }
+    onClick?.();
+  }, [onClick]);
+
   const handleMouseEnter = () => {
-    const rect = ref.current?.getBoundingClientRect();
+    const rect = wrapperRef.current?.getBoundingClientRect();
     if (rect) setY(rect.top + rect.height / 2);
     setShow(true);
   };
 
   return (
     <div
-      ref={ref}
+      ref={wrapperRef}
       className={`sidebar-item-wrapper ${isActive ? "active" : ""}`}
       onMouseEnter={handleMouseEnter}
-      onMouseLeave={() => setShow(false)}
+      onMouseLeave={() => { setShow(false); cancelPress(); }}
+      onMouseDown={startPress}
+      onMouseUp={cancelPress}
+      onTouchStart={startPress}
+      onTouchEnd={cancelPress}
     >
       <div className="pill" />
       {children ? (
-        children
+        <div onClick={handleClick}>{children}</div>
+      ) : avatar ? (
+        <img
+          src={avatar}
+          alt={label}
+          className="sidebar-avatar"
+          onClick={handleClick}
+          draggable={false}
+        />
       ) : (
-        <Button className="button-general" text={label} onClick={onClick} />
+        <Button className="button-general" text={label} onClick={handleClick} />
       )}
       {tooltip && (
         <div
           className={`sidebar-tooltip ${show ? "visible" : ""}`}
-          style={{ top: y, transform: `translateY(-50%) translateX(${show ? "0px" : "-4px"})` }}
+          style={{
+            top: y,
+            transform: `translateY(-50%) translateX(${show ? "0px" : "-4px"})`,
+          }}
         >
           {tooltip}
         </div>
@@ -55,19 +128,23 @@ const SidebarItem = ({ label, tooltip, isActive, onClick, children }) => {
   );
 };
 
+// ─── Sidebar ──────────────────────────────────────────────────────────────────
 const Sidebar = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
+  const navigate  = useNavigate();
+  const location  = useLocation();
+
+  const [isOpen,            setIsOpen]            = useState(false);
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
-  const [userPreferences, setUserPreferences] = useState(null);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [perfil, setPerfil] = useState(null);
+  const [userPreferences,   setUserPreferences]   = useState(null);
+  const [isProfileOpen,     setIsProfileOpen]     = useState(false);
+  const [perfil,            setPerfil]            = useState(null);
+
+  // ← Estado para el modal de edición
+  const [editingGroup,      setEditingGroup]      = useState(null); // group object | null
 
   const { groups, addGroup } = useGroups();
   const {
-    name,
-    setName,
+    name, setName,
     availableUsers,
     selectedCollaborators,
     selectCollaborator,
@@ -75,25 +152,19 @@ const Sidebar = () => {
     reset,
   } = useCreateGroupModal(isOpen);
 
-  const handleCreate = async () => {
+  const handleCreateGroup = async (avatarFile) => {
     if (!name.trim()) return alert("Por favor ingresa un nombre para el grupo");
     try {
-      await addGroup(name, selectedCollaborators.map(c => c.id));
+      await createGroup(name, selectedCollaborators.map(c => c.id), avatarFile);
       handleClose();
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Error al crear el grupo");
     }
   };
 
-  const logout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
-
-  const handleClose = () => {
-    setIsOpen(false);
-    reset();
-  };
+  const logout = () => { localStorage.clear(); navigate("/login"); };
+  const handleClose = () => { setIsOpen(false); reset(); };
 
   useEffect(() => {
     getProfile()
@@ -101,17 +172,15 @@ const Sidebar = () => {
       .catch((err) => console.error("Error al traer perfil:", err));
   }, []);
 
-  const handlePicUpdated = (nuevaRuta) => {
+  const handlePicUpdated = (nuevaRuta) =>
     setPerfil((prev) => ({ ...prev, profile_pic: nuevaRuta }));
-  };
 
   const handleSavePreferences = async (data) => {
     try {
       const saved = await preferencesApi.savePreferences(data);
       setUserPreferences(saved);
       setIsPreferencesOpen(false);
-      const themeClass = saved.theme === "light" ? "" : saved.theme;
-      document.body.className = themeClass;
+      document.body.className = saved.theme === "light" ? "" : saved.theme;
     } catch (err) {
       alert("Error guardando preferencias: " + err.message);
     }
@@ -128,16 +197,17 @@ const Sidebar = () => {
   return (
     <aside className="sidebar">
 
-      {/* ── HEADER FIJO: nav items ── */}
+      {/* ── HEADER FIJO ── */}
       <div className="sidebar-header">
-        {NAV_ITEMS.map(({ path, label, tooltip }) => (
+        {NAV_ITEMS.map(({ path, icon, tooltip }) => (
           <SidebarItem
             key={path}
-            label={label}
             tooltip={tooltip}
             isActive={location.pathname === path}
             onClick={() => navigate(path)}
-          />
+          >
+            <Button className="button-general">{icon}</Button>
+          </SidebarItem>
         ))}
         <Separator />
       </div>
@@ -154,28 +224,27 @@ const Sidebar = () => {
           <SidebarItem
             key={group.id}
             label={group.name[0].toUpperCase()}
+            avatar={getAvatarUrl(group.avatar)}
             tooltip={group.name}
             isActive={location.pathname === `/groups/${group.id}`}
             onClick={() => navigate(`/groups/${group.id}`)}
+            onLongPress={() => setEditingGroup(group)}
           />
         ))}
       </div>
 
-      {/* ── FOOTER FIJO: config y perfil ── */}
+      {/* ── FOOTER FIJO ── */}
       <div className="sidebar-footer">
         <Separator />
         <SidebarItem tooltip="Preferencias">
-          <Button onClick={() => setIsPreferencesOpen(true)}>
-            <FaCog />
-          </Button>
+          <Button onClick={() => setIsPreferencesOpen(true)}><FaCog /></Button>
         </SidebarItem>
         <SidebarItem tooltip="Perfil">
-          <Button onClick={() => setIsProfileOpen(true)}>
-            <FaUserAlt />
-          </Button>
+          <Button onClick={() => setIsProfileOpen(true)}><FaUserAlt /></Button>
         </SidebarItem>
       </div>
 
+      {/* ── MODALES ── */}
       <CreateGroupModal
         isOpen={isOpen}
         handleClose={handleClose}
@@ -185,8 +254,16 @@ const Sidebar = () => {
         selectedCollaborators={selectedCollaborators}
         selectCollaborator={selectCollaborator}
         removeCollaborator={removeCollaborator}
-        handleCreate={handleCreate}
+        handleCreate={handleCreateGroup}
       />
+
+      {/* Modal de edición — se abre con long press */}
+      <EditGroupModal
+        isOpen={!!editingGroup}
+        group={editingGroup}
+        handleClose={() => setEditingGroup(null)}
+      />
+
       <UserPreferencesModal
         isOpen={isPreferencesOpen}
         handleClose={() => setIsPreferencesOpen(false)}

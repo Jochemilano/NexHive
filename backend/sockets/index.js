@@ -35,8 +35,8 @@ module.exports = (io, connectedUsers) => {
           [roomId, socket.userId, type, content, replyToId || null]
         );
 
-        // 2️⃣ Obtener el nombre del remitente
-        const [user] = await db.query("SELECT name FROM users WHERE id=?", [socket.userId]);
+        // 2️⃣ Obtener el nombre y foto de perfil del remitente
+        const [user] = await db.query("SELECT name, profile_pic FROM users WHERE id=?", [socket.userId]);
 
         // 3️⃣ Preparar datos de mensaje original si es una respuesta
         let replyContent = null;
@@ -66,6 +66,7 @@ module.exports = (io, connectedUsers) => {
           room_id: roomId,
           sender_id: socket.userId,
           sender_name: user?.[0]?.name || "Usuario",
+          sender_avatar: user?.[0]?.avatar || null,
           type,
           content,
           reply_to_id: replyToId || null,

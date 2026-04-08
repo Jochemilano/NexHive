@@ -1,0 +1,105 @@
+/* ESTRUCTURA */
+.chat-search-wrapper {
+position: relative;
+display: flex;
+align-items: center;
+z-index: 100;
+}
+
+.search-box-container {
+position: absolute;
+right: 42px;
+display: flex;
+align-items: center;
+background-color: var(--bg-elevated);
+border: 1px solid var(--primary);
+border-radius: var(--radius-pill);
+padding: 0 10px;
+height: 28px;
+width: 200px;
+box-shadow: 0 2px 8px var(--shadow);
+animation: slideIn 0.2s ease-out;
+}
+
+/* INPUT */
+.chat-search-input {
+flex: 1;
+background: transparent;
+border: none;
+outline: none;
+color: var(--text-primary);
+font-size: 0.75rem;
+padding: 0 5px;
+min-width: 0;
+}
+
+/* CONTROLES */
+.search-nav-controls {
+display: flex;
+align-items: center;
+gap: 2px;
+border-left: 1px solid var(--border);
+padding-left: 6px;
+margin-left: 4px;
+}
+
+.search-index-text {
+font-size: 0.65rem;
+color: var(--text-secondary);
+font-family: monospace;
+font-weight: 600;
+margin-right: 2px;
+}
+
+.search-nav-controls button[type="button"] {
+background: transparent;
+border: none;
+color: var(--text-secondary);
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+width: 20px;
+height: 20px;
+border-radius: var(--radius-circle);
+transition: 0.2s;
+}
+
+.search-nav-controls button[type="button"]:hover {
+background-color: var(--bg-hover);
+color: var(--primary);
+}
+
+.search-nav-controls button svg {
+width: 9px;
+height: 9px;
+}
+
+/* SUBRAYADO DINÁMICO */
+.search-result-highlight {
+border-radius: 2px;
+padding: 0 2px;
+font-weight: 600;
+}
+
+.chat-message.mine .search-result-highlight {
+background-color: var(--bg-base) !important;
+color: var(--text-primary) !important;
+}
+
+.chat-message.other .search-result-highlight {
+background-color: var(--primary) !important;
+color: #ffffff !important;
+}
+
+/* ANIMACIONES */
+@keyframes slideIn {
+from { opacity: 0; transform: translateX(10px); }
+to { opacity: 1; transform: translateX(0); }
+}
+
+.chat-message.highlighted {
+position: relative;
+transform: scale(1.01);
+transition: transform 0.3s ease;
+}

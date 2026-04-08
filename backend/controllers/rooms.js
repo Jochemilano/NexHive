@@ -76,6 +76,7 @@ router.get("/rooms/:roomId/messages", verifyToken, async (req, res) => {
           m.reply_to_id,
           m.created_at,                          -- 👈 hora
           u.name AS sender_name,
+          u.profile_pic AS profile_pic,
           rm.content  AS reply_content,          -- 👈 texto del mensaje citado
           ru.name     AS reply_sender_name,      -- 👈 autor del mensaje citado
           CASE WHEN f.id IS NULL THEN 0 ELSE 1 END AS favorite
@@ -133,7 +134,7 @@ router.get("/rooms/:roomId/participants", verifyToken, async (req, res) => {
  
     // Traer los otros participantes (no el que consulta)
     const [participants] = await db.query(
-      `SELECT u.id, u.name
+      `SELECT u.id, u.name, u.profile_pic
        FROM room_participants rp
        JOIN users u ON u.id = rp.user_id
        WHERE rp.room_id = ? AND rp.user_id != ?`,

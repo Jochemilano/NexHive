@@ -3,11 +3,30 @@ import { useChat } from "@/hooks/useChat";
 import { useCall } from "@/context/CallContext";
 import CallVideo from "./Callvideo";
 import ImageModal from "./ImageModal";
-import { FaPaperclip, FaPaperPlane, FaStar, FaPhone, FaReply, FaEdit, FaTrash, FaTimes } from "react-icons/fa";
+import MediaPanel from "./MediaPanel";
+import ChatSearch from "./ChatSearch";
+import { FaPaperclip, FaPaperPlane, FaStar, FaPhone, FaReply, FaEdit, FaTrash, FaTimes, FaImages } from "react-icons/fa";
 import { getFileUrl, getFileName, toggleFavoriteMessage } from "@/utils/chat";
 import "./chat.css";
 import "./call.css";
 import { smoothScroll } from "@/utils/smoothScroll";
+import { getAvatarUrl } from "@/utils/media";
+
+// --- UTILIDADES DE BÚSQUEDA ---
+const normalizeText = (str) => 
+  str?.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() || "";
+
+const highlightText = (text, search) => {
+  if (!search.trim()) return text;
+  const escapedSearch = search.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+  const regex = new RegExp(`(${escapedSearch})`, "gi");
+  const parts = text.split(regex);
+  return parts.map((part, i) =>
+    normalizeText(part) === normalizeText(search) ? (
+      <span key={i} className="search-result-highlight">{part}</span>
+    ) : (part)
+  );
+};
 
 const formatTime = (dateStr) => {
   if (!dateStr) return "";
@@ -15,7 +34,7 @@ const formatTime = (dateStr) => {
   return d.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
 };
 
-const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete, onReplyToOriginal }) => {
+const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete, onReplyToOriginal, searchTerm }) => {
   const [favorite, setFavorite] = useState(msg.favorite === 1);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef();
@@ -60,7 +79,7 @@ const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete, 
         {{
           image: <img className="content-image" src={src} alt="imagen" onClick={() => onImageClick(src)} />,
           file:  <a className="content-file" href={src} target="_blank" rel="noreferrer">{getFileName(msg.content)}</a>,
-          text:  <p className="content">{msg.content}</p>,
+          text: <p className="content">{highlightText(msg.content, searchTerm)}</p>,
         }[msg.type]}
 
         <div className="message-meta">
@@ -111,13 +130,20 @@ const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete, 
 };
 
 // ── Componente principal ──────────────────────────────────
-const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
+const Chat = ({ roomId, userId, targetUserId, targetUserName, targetUserAvatar }) => {
   // 1. Estados
   const [input, setInput] = useState("");
   const [modalImage, setModalImage] = useState(null);
   const [replyTo, setReplyTo] = useState(null);
   const [editingMsg, setEditingMsg] = useState(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const [showMediaPanel, setShowMediaPanel] = useState(false);
+
+// --- NUEVOS ESTADOS DE BÚSQUEDA ---
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [currentMatchIndex, setCurrentMatchIndex] = useState(-1);
 
   // 2. Refs
   const chatPageRef = useRef(null);
@@ -126,7 +152,7 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
   const messageRefs = useRef({});
 
   // 3. Hooks de datos
-  const { messages, send, sendFile, deleteMessage, editMessage } = useChat(roomId, userId);
+  const { messages, send, sendFile, deleteMessage, editMessage, loadMore, hasMore, loadingMore } = useChat(roomId, userId);
   const { activeCall, isMinimized, startCall } = useCall();
 
   // 4. Funciones de scroll
@@ -221,6 +247,37 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
     setTimeout(() => target.classList.remove("highlighted"), 1500);
   };
 
+  // --- FUNCIONES DE LÓGICA DE BÚSQUEDA ---
+  const handleSearch = (text) => {
+    setSearchTerm(text);
+    if (!text.trim()) {
+      setSearchResults([]);
+      setCurrentMatchIndex(-1);
+      return;
+    }
+    const matches = messages
+      .filter(m => m.type === "text" && normalizeText(m.content).includes(normalizeText(text)))
+      .map(m => m.id);
+    
+    setSearchResults(matches);
+    if (matches.length > 0) {
+      setCurrentMatchIndex(matches.length - 1);
+      handleScrollToOriginal(matches[matches.length - 1]);
+    } else {
+      setCurrentMatchIndex(-1);
+    }
+  };
+
+  const navigateMatch = (direction) => {
+    if (searchResults.length === 0) return;
+    let nextIdx = direction === "up" 
+      ? (currentMatchIndex > 0 ? currentMatchIndex - 1 : searchResults.length - 1)
+      : (currentMatchIndex < searchResults.length - 1 ? currentMatchIndex + 1 : 0);
+    
+    setCurrentMatchIndex(nextIdx);
+    handleScrollToOriginal(searchResults[nextIdx]);
+  };
+
   return (
     <div className="chat-page" ref={chatPageRef}>
       {activeCall && !isMinimized && (
@@ -232,14 +289,38 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
       <div className="chat-section">
         <div className="chat-header">
           <div className="chat-header-info">
-            <div className="chat-avatar">{targetUserName?.[0] || "C"}</div>
+            <div className="chat-avatar">
+              {targetUserAvatar
+                ? <img src={getAvatarUrl(targetUserAvatar)} alt={targetUserName} className="avatar-img" />
+                : targetUserName?.[0] || "C"
+              }
+            </div>
             <span className="chat-username">{targetUserName || "Chat"}</span>
           </div>
+
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          <ChatSearch 
+              showSearch={showSearch}
+              setShowSearch={setShowSearch}
+              searchTerm={searchTerm}
+              onSearch={handleSearch}
+              results={searchResults}
+              currentIndex={currentMatchIndex}
+              onNavigate={navigateMatch}
+            />
+          
           {targetUserId && !activeCall && (
             <button onClick={handleCall} className="call-start-btn">
               Llamar <FaPhone />
             </button>
           )}
+          <button
+              onClick={() => setShowMediaPanel(prev => !prev)}
+              className="call-start-btn"
+            >
+              Multimedia <FaImages />
+            </button>
+          </div>
         </div>
 
         <div className="chat-messages" ref={messagesRef}>
@@ -252,6 +333,7 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
               <span className="sender">{msg.sender_name || msg.sender_id}</span>
               <MessageContent
                 msg={msg}
+                searchTerm={searchTerm}
                 onImageClick={setModalImage}
                 isMine={Number(msg.sender_id) === Number(userId)}
                 onReply={handleReply}
@@ -262,6 +344,14 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName }) => {
             </div>
           ))}
         </div>
+
+        {showMediaPanel && (
+          <MediaPanel
+             messages={messages} //
+            onClose={() => setShowMediaPanel(false)}
+            onImageClick={setModalImage}
+  />
+        )}
 
         <div className="chat-footer">
           {(replyTo || editingMsg) && (

@@ -84,7 +84,8 @@
 
 /* ── Botones base ── */
 .sidebar .button-general,
-.modal-button {
+.modal-button,
+.sidebar-avatar {
   background-color: var(--bg-base);
   color: var(--text-primary);
   border-radius: var(--radius-circle);
@@ -105,13 +106,21 @@
 .sidebar-item-wrapper.active .button-general {
   border-radius: 12px;
   background-color: var(--primary);
-  color: #ffffff;
 }
 
-.sidebar-item-wrapper:hover .modal-button {
+.sidebar-item-wrapper:hover .modal-button,
+.sidebar-item-wrapper:hover .sidebar-avatar {
   background-color: var(--success) !important;
   border-radius: 12px;
-  color: #ffffff;
+}
+
+.sidebar .button-general svg,
+.sidebar .modal-button svg,
+.sidebar .sidebar-avatar svg {
+  width: 1rem;
+  height: 1rem;
+  display: block;
+  margin: auto;
 }
 
 /* ── Separador ── */

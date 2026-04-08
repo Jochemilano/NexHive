@@ -5,16 +5,17 @@ const verifyToken = require("../middleware/verifyToken");
 
 // Crear grupo
 router.post("/groups", verifyToken, async (req, res) => {
-  const { name, collaborators = [] } = req.body;
+  const { name, collaborators = [], avatar = null } = req.body;
   const adminId = req.userId;
 
   if (!name) return res.status(400).json({ message: "Nombre requerido" });
 
   try {
     const result = await query(
-      "INSERT INTO groups (name, admin_id) VALUES (?, ?)",
-      [name, adminId]
+      "INSERT INTO groups (name, admin_id, avatar) VALUES (?, ?, ?)",
+      [name, adminId, avatar]
     );
+
     const groupId = result.insertId;
 
     await query(
@@ -74,7 +75,7 @@ router.get("/groups", verifyToken, async (req, res) => {
 
   try {
     const results = await query(
-      `SELECT g.id, g.name, g.admin_id
+      `SELECT g.id, g.name, g.admin_id, g.avatar
        FROM groups g
        JOIN user_groups ug ON g.id = ug.group_id
        WHERE ug.user_id = ?`,
@@ -186,6 +187,44 @@ router.get("/groups/:groupId/users", verifyToken, async (req, res) => {
   } catch (err) {
     console.error("ERROR DB GET GROUP USERS:", err);
     res.status(500).json({ message: "Error al traer usuarios del grupo" });
+  }
+});
+
+//Editar gpo
+router.patch("/groups/:groupId", verifyToken, async (req, res) => {
+  const { groupId } = req.params;
+  const { name, collaborators = [], avatar = null } = req.body;
+  const userId = req.userId;
+
+  try {
+    // Verificar que el usuario es admin del grupo
+    const group = await query("SELECT * FROM groups WHERE id=? AND admin_id=?", [groupId, userId]);
+    if (group.length === 0) return res.status(403).json({ message: "No eres admin del grupo" });
+
+    // Actualizar nombre y avatar si vienen
+    if (name || avatar) {
+      await query(
+        "UPDATE groups SET name = COALESCE(?, name), avatar = COALESCE(?, avatar) WHERE id = ?",
+        [name, avatar, groupId]
+      );
+    }
+
+    // Actualizar colaboradores
+    if (collaborators) {
+      // Eliminar existentes excepto el admin
+      await query("DELETE FROM user_groups WHERE group_id=? AND user_id != ?", [groupId, userId]);
+
+      // Insertar los nuevos
+      if (collaborators.length > 0) {
+        const values = collaborators.map(userId => [userId, groupId]);
+        await query("INSERT INTO user_groups (user_id, group_id) VALUES ?", [values]);
+      }
+    }
+
+    res.json({ message: "Grupo actualizado" });
+  } catch (err) {
+    console.error("ERROR DB UPDATE GROUP:", err);
+    res.status(500).json({ message: "Error al actualizar grupo" });
   }
 });
 
