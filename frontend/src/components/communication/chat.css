@@ -61,25 +61,54 @@
   color: var(--text-primary);
 }
 
-.call-start-btn {
-  background: var(--primary);
-  color: #fff;
+.header-icon-btn {
+  background: transparent;
   border: none;
-  border-radius: var(--radius-pill);
-  padding: 6px 14px;
-  font-size: 14px;
-  cursor: pointer;
+  color: var(--text-secondary);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 6px;
-  transition: opacity 0.2s;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.header-icon-btn:hover {
+  background: var(--bg-base);
+  color: var(--primary);
+}
+
+.chat-header button, 
+.chat-header .header-icon-btn,
+.chat-header [class*="search"] button {
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.chat-header button:hover, 
+.chat-header .header-icon-btn:hover,
+.chat-header [class*="search"] button:hover {
+  background: var(--bg-base);
+  color: var(--primary);
 }
 
 /* ── MENSAJES (CONTENEDOR) ─────────────────────────────── */
 .chat-messages {
   width: 100%;
   flex: 1;
-  padding: 6rem 15px;
+  padding: 5rem 15px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -417,4 +446,114 @@
 
 .scroll-to-bottom-btn:hover {
   scale: calc(1.1);
+}
+
+/* ── PREVISUALIZACIÓN MULTIMEDIA (FOTOS Y ARCHIVOS) ── */
+.preview-upload-box {
+  background: var(--bg-base);
+  border-left: 4px solid var(--primary);
+  border-radius: 15px 15px 0 0;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: -1px;
+  box-shadow: 0 -2px 8px var(--shadow);
+  animation: slideUpChat 0.2s ease-out;
+}
+
+.preview-image-wrapper {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+}
+
+.preview-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-search);
+  border: 1px solid var(--border);
+}
+
+.preview-file-icon {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-search);
+  color: var(--primary);
+  font-size: 18px;
+  border: 1px dashed var(--border);
+}
+
+.remove-preview {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--error);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-circle);
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px var(--shadow);
+  transition: transform 0.2s ease;
+}
+
+.remove-preview:hover {
+  transform: scale(1.1);
+  filter: brightness(0.9);
+}
+
+/* Información del archivo */
+.preview-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.file-name-truncate {
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.file-status {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* ── REGLAS DE UNIÓN Y CONEXIÓN ── */
+
+.preview-upload-box + .chat-input,
+.action-banner + .chat-input,
+.preview-upload-box + .action-banner + .chat-input {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+.preview-upload-box + .action-banner {
+  border-radius: 0 !important;
+  box-shadow: none;
+  border-top: 1px solid var(--border);
+}
+
+@keyframes slideUpChat {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }

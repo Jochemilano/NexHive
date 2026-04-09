@@ -2,19 +2,34 @@ const jwt = require("jsonwebtoken");
 const db = require("../db");
 
 module.exports = (io, connectedUsers) => {
-  // ← FUERA de io.on("connection") para que sea compartido entre todos los usuarios
-  const voiceRooms = new Map(); // voiceRoomId -> Set de userIds
+  const voiceRooms = new Map(); 
 
-  io.on("connection", (socket) => {
+  io.on("connection", async (socket) => {
     const token = socket.handshake.auth?.token;
     if (!token) return socket.disconnect();
 
     try {
       const payload = jwt.verify(token, process.env.JWT_SECRET);
       socket.userId = payload.id;
-      connectedUsers.set(socket.userId, socket.id);
+
+      // traer datos del usuario
+      const [rows] = await db.query(
+        "SELECT id, name, profile_pic FROM users WHERE id = ?",
+        [payload.id]
+      );
+
+      const userData = rows[0];
+
+      socket.userInfo = userData;
+      connectedUsers.set(socket.userId, userData);
+
       socket.join(socket.userId.toString());
+
       console.log("Usuario conectado:", socket.userId);
+
+      // enviar info completa
+      io.emit("usuarios:lista", [...connectedUsers.values()]);
+
     } catch (err) {
       console.log("❌ JWT inválido en socket:", err.message);
       return socket.disconnect();
@@ -180,7 +195,6 @@ module.exports = (io, connectedUsers) => {
     // ──────────────────────────────────────────────────────────────────────
 
     socket.on("disconnect", () => {
-      // Limpiar de todas las salas de voz en las que estaba
       voiceRooms.forEach((room, roomKey) => {
         if (room.has(socket.userId)) {
           room.delete(socket.userId);
@@ -191,6 +205,7 @@ module.exports = (io, connectedUsers) => {
 
       connectedUsers.delete(socket.userId);
       console.log("Usuario desconectado:", socket.userId);
+      io.emit("usuarios:lista", [...connectedUsers.values()]); // ← fuera del forEach y con .values()
     });
   });
 };

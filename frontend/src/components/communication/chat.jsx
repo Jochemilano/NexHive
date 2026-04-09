@@ -5,7 +5,7 @@ import CallVideo from "./Callvideo";
 import ImageModal from "./ImageModal";
 import MediaPanel from "./MediaPanel";
 import ChatSearch from "./ChatSearch";
-import { FaPaperclip, FaPaperPlane, FaStar, FaPhone, FaReply, FaEdit, FaTrash, FaTimes, FaImages } from "react-icons/fa";
+import { FaPaperclip, FaPaperPlane, FaStar, FaPhone, FaReply, FaEdit, FaTrash, FaTimes, FaImages, FaCopy } from "react-icons/fa";
 import { getFileUrl, getFileName, toggleFavoriteMessage } from "@/utils/chat";
 import "./chat.css";
 import "./call.css";
@@ -62,6 +62,16 @@ const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete, 
     }
   };
 
+  const handleCopy = () => {
+    if (msg.type === "text") {
+      navigator.clipboard.writeText(msg.content)
+        .then(() => {
+          console.log("Mensaje copiado al portapapeles");
+        })
+        .catch(err => console.error("Error al copiar: ", err));
+    }
+  };
+
   return (
     <div className="message-wrapper">
       <div className="message-content">
@@ -98,6 +108,12 @@ const MessageContent = ({ msg, onImageClick, isMine, onReply, onEdit, onDelete, 
         {menuOpen && (
           <div className="context-menu" ref={menuRef}>
             <ul>
+              {msg.type === "text" && (
+                <li onClick={() => { handleCopy(); setMenuOpen(false); }}>
+                  <FaCopy style={{ marginRight: 6 }} /> Copiar
+                </li>
+              )}
+
               <li onClick={() => { handleFavorite(); setMenuOpen(false); }}>
                 <FaStar style={{color: favorite ? "gold" : "gray", marginRight: 6}} />
                 Favoritos
@@ -134,13 +150,14 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName, targetUserAvatar }
   // 1. Estados
   const [input, setInput] = useState("");
   const [modalImage, setModalImage] = useState(null);
+  const [previewFile, setPreviewFile] = useState(null);
   const [replyTo, setReplyTo] = useState(null);
   const [editingMsg, setEditingMsg] = useState(null);
   const [isAtBottom, setIsAtBottom] = useState(true);
   const [showMediaPanel, setShowMediaPanel] = useState(false);
 
 // --- NUEVOS ESTADOS DE BÚSQUEDA ---
-  const [showSearch, setShowSearch] = useState(false);
+  const [showSearch, setSearchSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [currentMatchIndex, setCurrentMatchIndex] = useState(-1);
@@ -193,8 +210,14 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName, targetUserAvatar }
     if (isAtBottom) scrollToBottom();
   }, [messages]);
 
-  // 6. Handlers
+ // 6. Handlers
   const handleSend = () => {
+    if (previewFile) {
+      sendFile(previewFile);
+      setPreviewFile(null);
+      if (!input.trim()) return;
+    }
+
     if (!input.trim()) return;
     if (editingMsg) {
       editMessage(editingMsg.id, input);
@@ -206,8 +229,27 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName, targetUserAvatar }
     setInput("");
   };
 
-  const handleFile  = (e) => sendFile(e.target.files[0]);
-  const handleCall  = () => startCall(targetUserId, targetUserName, roomId);
+  const handleFile = (e) => {
+    const file = e.target.files[0];
+    if (file) setPreviewFile(file);
+  };
+
+  const handlePaste = (e) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf("image") !== -1) {
+        const file = items[i].getAsFile();
+        if (file) {
+          e.preventDefault();
+          e.stopPropagation();
+          setPreviewFile(file);
+        }
+      }
+    }
+  };
+
+  const handleCall = () => startCall(targetUserId, targetUserName, roomId);
 
   const handleEdit = (msg) => {
     setEditingMsg(msg);
@@ -223,6 +265,7 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName, targetUserAvatar }
   const cancelAction = () => {
     setReplyTo(null);
     setEditingMsg(null);
+    setPreviewFile(null);
     setInput("");
   };
 
@@ -238,16 +281,12 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName, targetUserAvatar }
     const container = scrollContainerRef.current;
     const target = messageRefs.current[msgId];
     if (!container || !target) return;
-
     const targetPos = target.offsetTop - container.offsetTop - (container.clientHeight / 2) + (target.clientHeight / 2);
-
     smoothScroll(container, targetPos, { maxDuration: 800 });
-
     target.classList.add("highlighted");
     setTimeout(() => target.classList.remove("highlighted"), 1500);
   };
 
-  // --- FUNCIONES DE LÓGICA DE BÚSQUEDA ---
   const handleSearch = (text) => {
     setSearchTerm(text);
     if (!text.trim()) {
@@ -292,35 +331,40 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName, targetUserAvatar }
             <div className="chat-avatar">
               {targetUserAvatar
                 ? <img src={getAvatarUrl(targetUserAvatar)} alt={targetUserName} className="avatar-img" />
-                : targetUserName?.[0] || "C"
-              }
+                : targetUserName?.[0] || "C"}
             </div>
             <span className="chat-username">{targetUserName || "Chat"}</span>
           </div>
 
           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          <ChatSearch 
-              showSearch={showSearch}
-              setShowSearch={setShowSearch}
-              searchTerm={searchTerm}
-              onSearch={handleSearch}
-              results={searchResults}
-              currentIndex={currentMatchIndex}
-              onNavigate={navigateMatch}
-            />
-          
-          {targetUserId && !activeCall && (
-            <button onClick={handleCall} className="call-start-btn">
-              Llamar <FaPhone />
-            </button>
-          )}
+            <ChatSearch 
+            showSearch={showSearch}
+            setShowSearch={setSearchSearch}
+            searchTerm={searchTerm}
+            onSearch={handleSearch}
+            results={searchResults}
+            currentIndex={currentMatchIndex}
+            onNavigate={navigateMatch}
+           />
+  
+            {targetUserId && !activeCall && (
+            <button 
+            onClick={handleCall} 
+            className="header-icon-btn" 
+            title="Llamar"
+          >
+          <FaPhone />
+          </button>
+        )}
+
           <button
-              onClick={() => setShowMediaPanel(prev => !prev)}
-              className="call-start-btn"
-            >
-              Multimedia <FaImages />
-            </button>
-          </div>
+          onClick={() => setShowMediaPanel(prev => !prev)}
+          className="header-icon-btn"
+          title="Multimedia"
+           >
+          <FaImages />
+        </button>
+      </div>
         </div>
 
         <div className="chat-messages" ref={messagesRef}>
@@ -347,13 +391,40 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName, targetUserAvatar }
 
         {showMediaPanel && (
           <MediaPanel
-             messages={messages} //
+            messages={messages}
             onClose={() => setShowMediaPanel(false)}
             onImageClick={setModalImage}
-  />
+          />
         )}
 
         <div className="chat-footer">
+          {previewFile && (
+  <div className="preview-upload-box">
+    <div className="preview-image-wrapper">
+      {/* Si el archivo empieza con "image/", muestra la foto */}
+      {previewFile.type.startsWith("image/") ? (
+        <img src={URL.createObjectURL(previewFile)} alt="preview" />
+      ) : (
+        /* Si es PDF o cualquier otro, muestra el icono del clip */
+        <div className="preview-file-icon">
+          <FaPaperclip />
+        </div>
+      )}
+      <button className="remove-preview" onClick={() => setPreviewFile(null)} type="button">
+        <FaTimes />
+      </button>
+    </div>
+    
+    <div className="preview-info">
+      {/* Muestra el nombre real: "documento.pdf" */}
+      <span className="file-name-truncate">{previewFile.name}</span>
+      <span className="file-status">
+        {previewFile.type.startsWith("image/") ? "Imagen lista" : "Archivo listo"}
+      </span>
+    </div>
+  </div>
+)}
+
           {(replyTo || editingMsg) && (
             <div className="action-banner">
               <div className="action-content">
@@ -392,18 +463,23 @@ const Chat = ({ roomId, userId, targetUserId, targetUserName, targetUserAvatar }
             <textarea
               value={input}
               onChange={handleInputChange}
+              onPaste={handlePaste}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   handleSend();
                 }
               }}
-              placeholder={editingMsg ? "Edita el mensaje..." : "Escribe un mensaje..."}
+            placeholder={
+            previewFile 
+            ? "Añade un comentario al archivo..." 
+            : (editingMsg ? "Edita el mensaje..." : "Escribe un mensaje...")
+            }
               className="chat-textarea"
               rows={1}
             />
 
-            <button onClick={handleSend} className="send-btn" disabled={!input.trim()}>
+            <button onClick={handleSend} className="send-btn" disabled={!input.trim() && !previewFile}>
               <FaPaperPlane />
             </button>
           </div>

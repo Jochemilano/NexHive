@@ -21,7 +21,9 @@ router.get("/profile", verifyToken, async (req, res) => {
 //Traer usuarios activos
 router.get("/users", async (req, res) => {
   try {
-    const [results] = await db.query(`SELECT id, name FROM users WHERE status = 1`);
+    const [results] = await db.query(
+      `SELECT id, name, profile_pic FROM users WHERE status = 1`
+    );
     res.json(results);
   } catch (err) {
     console.error("ERROR GET USERS:", err);
