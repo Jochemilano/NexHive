@@ -10,10 +10,8 @@ export const useGroups = () => {
       .catch(err => console.error("Error cargando grupos:", err));
   }, []);
 
-  const addGroup = async (name, collaboratorIds) => {
-    const newGroup = await createGroup(name, collaboratorIds);
-    setGroups(prev => [...prev, newGroup]);
-    return newGroup;
+  const addGroup = (group) => {
+    setGroups(prev => [...prev, group]);
   };
 
   return { groups, addGroup };

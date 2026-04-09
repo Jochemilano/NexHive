@@ -13,7 +13,7 @@ import UserPreferencesModal from '@/components/profile/UserPreferencesModal';
 import { preferencesApi } from "@/utils/preferences";
 import ProfileModal from '@/components/profile/ProfileModal';
 import { getProfile } from "@/utils/profile";
-import { createGroup } from "@/utils/groups";
+import { createGroup, fetchGroups } from "@/utils/groups";
 import { getAvatarUrl } from "@/utils/media";
 import { addLongPress } from "@/utils/longPress";
 import { FaComments, FaStar, FaCalendarAlt } from "react-icons/fa";
@@ -153,13 +153,21 @@ const Sidebar = () => {
   } = useCreateGroupModal(isOpen);
 
   const handleCreateGroup = async (avatarFile) => {
-    if (!name.trim()) return alert("Por favor ingresa un nombre para el grupo");
+    if (!name.trim()) return alert("Nombre requerido");
+
     try {
-      await createGroup(name, selectedCollaborators.map(c => c.id), avatarFile);
+      const newGroup = await createGroup(
+        name,
+        selectedCollaborators.map(c => c.id),
+        avatarFile
+      );
+
+      addGroup(newGroup);
+
       handleClose();
     } catch (err) {
       console.error(err);
-      alert("Error al crear el grupo");
+      alert("Error al crear grupo");
     }
   };
 
@@ -193,6 +201,10 @@ const Sidebar = () => {
     };
     fetchPrefs();
   }, []);
+  const refreshGroups = async () => {
+    const data = await fetchGroups();
+    setGroups(data);
+  };
 
   return (
     <aside className="sidebar">
@@ -262,6 +274,7 @@ const Sidebar = () => {
         isOpen={!!editingGroup}
         group={editingGroup}
         handleClose={() => setEditingGroup(null)}
+        onUpdate={fetchGroups}
       />
 
       <UserPreferencesModal

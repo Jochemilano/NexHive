@@ -63,7 +63,7 @@ const AvatarInput = ({ handleFile, currentAvatar = null }) => {
         />
       </div>
 
-      <style jsx>{`
+      <style>{`
         .avatar-input-container {
           width: 100%;
           display: flex;
